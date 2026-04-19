@@ -52,7 +52,7 @@ const flow: Record<ConditionId, Question[]> = {
   pain: [
     { section: "خصائص العَرَض", key: "painType", label: "نوع الألم", options: ["حاد", "نابض", "حارق", "شد عضلي", "تنميل"] },
     { key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
-    { key: "duration", label: "مدة الألم", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
+    { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { key: "severity", label: "شدة الألم", options: ["خفيف", "متوسط", "شديد"] },
     { section: "سلوك الأعراض", key: "aggravating", label: "متى يزيد الألم؟", options: ["عند الحركة", "عند الجلوس", "عند الوقوف", "مستمر"] },
     { key: "rest", label: "هل يتحسن مع الراحة؟", options: ["نعم", "لا"] },
@@ -100,7 +100,15 @@ function buildSummary(d: BookingData): string {
   if (p === "pain") {
     const rest = m.rest === "نعم" ? "ويتحسن مع الراحة" : m.rest === "لا" ? "ولا يتحسن مع الراحة" : "";
     const diag = m.diagnosed === "نعم" ? "تم تشخيص الحالة طبياً" : "لم يتم التشخيص الطبي بعد";
-    return `يعاني المريض من ألم ${m.painType || "—"} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
+    const durationMap: Record<string, string> = {
+      "أقل من أسبوع": "ألم حاد",
+      "من أسبوع إلى أقل من شهر": "ألم حاد",
+      "من شهر إلى 3 أشهر": "ألم شبه حاد",
+      "أكثر من 3 أشهر": "ألم مزمن",
+    };
+    const clinicalType = m.duration ? durationMap[m.duration] : "";
+    const painDescriptor = clinicalType ? `${clinicalType} (${m.painType || "—"})` : `ألم ${m.painType || "—"}`;
+    return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
