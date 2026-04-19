@@ -26,7 +26,7 @@ export function BookingWizard() {
     }
     if (step === 2) return !!data.service;
     if (step === 3) return confirmed;
-    if (step === 4) return !!data.preferences.gender && !!data.preferences.time;
+    if (step === 4) return !!data.preferences.expertise && !!data.preferences.time;
     return false;
   })();
 
