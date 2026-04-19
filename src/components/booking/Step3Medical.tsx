@@ -100,7 +100,15 @@ function buildSummary(d: BookingData): string {
   if (p === "pain") {
     const rest = m.rest === "نعم" ? "ويتحسن مع الراحة" : m.rest === "لا" ? "ولا يتحسن مع الراحة" : "";
     const diag = m.diagnosed === "نعم" ? "تم تشخيص الحالة طبياً" : "لم يتم التشخيص الطبي بعد";
-    return `يعاني المريض من ألم ${m.painType || "—"} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
+    const durationMap: Record<string, string> = {
+      "أقل من أسبوع": "ألم حاد",
+      "من أسبوع إلى أقل من شهر": "ألم حاد",
+      "من شهر إلى 3 أشهر": "ألم شبه حاد",
+      "أكثر من 3 أشهر": "ألم مزمن",
+    };
+    const clinicalType = m.duration ? durationMap[m.duration] : "";
+    const painDescriptor = clinicalType ? `${clinicalType} (${m.painType || "—"})` : `ألم ${m.painType || "—"}`;
+    return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
