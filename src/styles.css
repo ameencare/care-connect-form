@@ -144,8 +144,31 @@
     border-color: var(--color-border);
   }
 
+  html {
+    font-family: 'Tajawal', 'Segoe UI', system-ui, sans-serif;
+  }
+
   body {
-    background-color: var(--color-background);
+    background: var(--gradient-soft);
     color: var(--color-foreground);
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-brand {
+    background: var(--gradient-brand);
+  }
+  .text-gradient-brand {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
   }
 }
