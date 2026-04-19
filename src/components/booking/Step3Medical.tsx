@@ -12,6 +12,7 @@ import {
   FileCheck2,
   Edit3,
   CheckCircle2,
+  Stethoscope,
 } from "lucide-react";
 import type { BookingData, ServiceType } from "./types";
 
@@ -22,42 +23,61 @@ interface Props {
   setConfirmed: (v: boolean) => void;
 }
 
-type ConditionId = "pain" | "fracture" | "mobility" | "speech" | "nutrition";
+type ConditionId = "pain" | "fracture" | "mobility" | "post_op" | "speech" | "nutrition";
+
+interface Question {
+  key: string;
+  label: string;
+  options: string[];
+  section?: string;
+}
 
 const allConditions: { id: ConditionId; title: string; icon: React.ReactNode }[] = [
   { id: "pain", title: "ألم", icon: <AlertCircle className="h-6 w-6" /> },
-  { id: "fracture", title: "كسر / إصابة", icon: <Bone className="h-6 w-6" /> },
-  { id: "mobility", title: "ضعف حركي / تأهيل", icon: <Activity className="h-6 w-6" /> },
+  { id: "fracture", title: "إصابة / كسر", icon: <Bone className="h-6 w-6" /> },
+  { id: "mobility", title: "ضعف أو صعوبة في الحركة", icon: <Activity className="h-6 w-6" /> },
+  { id: "post_op", title: "بعد عملية جراحية", icon: <Stethoscope className="h-6 w-6" /> },
   { id: "speech", title: "مشكلة في النطق أو البلع", icon: <MessageCircle className="h-6 w-6" /> },
   { id: "nutrition", title: "مشكلة غذائية", icon: <Apple className="h-6 w-6" /> },
 ];
 
 const serviceToConditions: Record<NonNullable<ServiceType>, ConditionId[]> = {
-  physio: ["pain", "fracture", "mobility"],
-  occupational: ["pain", "fracture", "mobility"],
+  physio: ["pain", "fracture", "mobility", "post_op"],
+  occupational: ["pain", "fracture", "mobility", "post_op"],
   speech: ["speech"],
   nutrition: ["nutrition"],
 };
 
-const flow: Record<ConditionId, { key: string; label: string; options: string[] }[]> = {
+const flow: Record<ConditionId, Question[]> = {
   pain: [
-    { key: "painType", label: "نوع الألم", options: ["حاد", "نابض", "حارق", "شد عضلي", "تنميل"] },
-    { key: "place", label: "مكان الألم", options: ["الظهر", "الركبة", "الرقبة", "الكتف", "أخرى"] },
+    { section: "خصائص العَرَض", key: "painType", label: "نوع الألم", options: ["حاد", "نابض", "حارق", "شد عضلي", "تنميل"] },
+    { key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
     { key: "duration", label: "مدة الألم", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
     { key: "severity", label: "شدة الألم", options: ["خفيف", "متوسط", "شديد"] },
-    { key: "impact", label: "التأثير على النشاط", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
+    { section: "سلوك الأعراض", key: "aggravating", label: "متى يزيد الألم؟", options: ["عند الحركة", "عند الجلوس", "عند الوقوف", "مستمر"] },
+    { key: "rest", label: "هل يتحسن مع الراحة؟", options: ["نعم", "لا"] },
+    { section: "التأثير الوظيفي", key: "impact", label: "هل يؤثر على الأنشطة اليومية؟", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
+    { key: "limitation", label: "ما الذي لا يستطيع المريض القيام به؟", options: ["المشي", "الجلوس لفترة طويلة", "صعود الدرج", "استخدام اليد"] },
+    { section: "السياق الطبي", key: "diagnosed", label: "هل تم تشخيص الحالة من قبل طبيب؟", options: ["نعم", "لا"] },
+    { key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
   ],
   fracture: [
-    { key: "place", label: "مكان الإصابة", options: ["يد", "رجل", "ظهر", "أخرى"] },
-    { key: "when", label: "متى حدثت الإصابة", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
-    { key: "surgery", label: "هل تم إجراء عملية", options: ["نعم", "لا"] },
-    { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
+    { key: "place", label: "مكان الإصابة", options: ["اليد", "الرجل", "الظهر", "الكتف", "أخرى"] },
+    { key: "when", label: "وقت الإصابة", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
+    { key: "surgery", label: "هل تم إجراء عملية؟", options: ["نعم", "لا"] },
+    { key: "movement", label: "مستوى الحركة الحالي", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
   ],
   mobility: [
-    { key: "mainIssue", label: "المشكلة الرئيسية", options: ["صعوبة في المشي", "ضعف عضلي", "بعد عملية", "بعد جلطة"] },
+    { key: "issueType", label: "نوع المشكلة", options: ["ضعف عضلي", "مشكلة توازن", "صعوبة في المشي"] },
     { key: "since", label: "مدة الحالة", options: ["أقل من شهر", "أكثر من شهر"] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "بمساعدة", "لا يستطيع المشي"] },
-    { key: "aid", label: "استخدام أدوات مساعدة", options: ["كرسي متحرك", "عكاز", "لا يوجد"] },
+    { key: "aid", label: "استخدام أدوات مساعدة", options: ["كرسي متحرك", "عكاز", "مشاية", "لا يوجد"] },
+  ],
+  post_op: [
+    { key: "surgeryType", label: "نوع العملية", options: ["ركبة", "ورك", "ظهر", "كتف", "أخرى"] },
+    { key: "when", label: "متى تمت العملية", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
+    { key: "severity", label: "مستوى الألم", options: ["خفيف", "متوسط", "شديد"] },
+    { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
   ],
   speech: [
     { key: "mainIssue", label: "المشكلة الأساسية", options: ["صعوبة في الكلام", "صعوبة في البلع", "الاثنين"] },
@@ -78,14 +98,19 @@ function buildSummary(d: BookingData): string {
   const m = d.medical;
   if (!p) return "";
   if (p === "pain") {
-    return `يعاني المريض من ألم ${m.painType || ""} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، والتأثير على النشاط: ${m.impact || "—"}.`;
+    const rest = m.rest === "نعم" ? "ويتحسن مع الراحة" : m.rest === "لا" ? "ولا يتحسن مع الراحة" : "";
+    const diag = m.diagnosed === "نعم" ? "تم تشخيص الحالة طبياً" : "لم يتم التشخيص الطبي بعد";
+    return `يعاني المريض من ألم ${m.painType || "—"} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
-    return `يعاني المريض من إصابة في ${m.place || "—"} منذ ${m.when || "—"}، ${op}، ومستوى الحركة: ${m.movement || "—"}.`;
+    return `يعاني المريض من إصابة في ${m.place || "—"} منذ ${m.when || "—"}، ${op}، ومستوى الحركة الحالي: ${m.movement || "—"}.`;
   }
   if (p === "mobility") {
-    return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"}، مستوى الحركة: ${m.movement || "—"}، الأدوات المساعدة: ${m.aid || "—"}.`;
+    return `يعاني المريض من ${m.issueType || "—"} منذ ${m.since || "—"}، مستوى الحركة: ${m.movement || "—"}، الأدوات المساعدة: ${m.aid || "—"}.`;
+  }
+  if (p === "post_op") {
+    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}، مستوى الألم: ${m.severity || "—"}، ومستوى الحركة: ${m.movement || "—"}.`;
   }
   if (p === "speech") {
     return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"} بدرجة ${m.severity || "—"}، مما يسبب ${m.impact || "—"}.`;
@@ -113,7 +138,6 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
     setConfirmed(false);
   };
 
-  // Auto-select the only condition if there's just one
   if (service && conditions.length === 1 && problem !== conditions[0].id) {
     update({ medical: { problem: conditions[0].id } });
   }
@@ -130,7 +154,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-foreground">حدد حالتك الصحية</h2>
-        <p className="mt-1 text-muted-foreground">ما نوع المشكلة الصحية؟</p>
+        <p className="mt-1 text-muted-foreground">ما هي مشكلتك الرئيسية؟</p>
       </div>
 
       {conditions.length > 1 && (
@@ -151,32 +175,44 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
         </div>
       )}
 
-      {questions.map((q) => (
-        <div key={q.key} className="animate-in fade-in slide-in-from-bottom-2 space-y-3">
-          <Label className="text-base font-semibold">{q.label}</Label>
-          <div className="flex flex-wrap gap-2">
-            {q.options.map((opt) => {
-              const active = data.medical[q.key] === opt;
-              return (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setAnswer(q.key, opt)}
-                  className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
-                    active
-                      ? "border-primary bg-gradient-brand text-white shadow-soft"
-                      : "border-border bg-card text-foreground hover:border-primary/50"
-                  }`}
-                >
-                  {opt}
-                </button>
-              );
-            })}
+      {questions.map((q, idx) => {
+        const showSection = q.section && (idx === 0 || questions[idx - 1].section !== q.section);
+        return (
+          <div key={q.key} className="space-y-3">
+            {showSection && (
+              <div className="flex items-center gap-2 pt-2">
+                <div className="h-1 w-1 rounded-full bg-primary" />
+                <span className="text-xs font-bold uppercase tracking-wider text-primary">{q.section}</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+            )}
+            <div className="animate-in fade-in slide-in-from-bottom-2 space-y-3">
+              <Label className="text-base font-semibold">{q.label}</Label>
+              <div className="flex flex-wrap gap-2">
+                {q.options.map((opt) => {
+                  const active = data.medical[q.key] === opt;
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => setAnswer(q.key, opt)}
+                      className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
+                        active
+                          ? "border-primary bg-gradient-brand text-white shadow-soft"
+                          : "border-border bg-card text-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
-      {problem === "fracture" && (
+      {(problem === "fracture" || problem === "post_op") && (
         <div className="animate-in fade-in space-y-2">
           <Label className="text-sm font-semibold">إرفاق تقرير طبي (اختياري)</Label>
           <label className="flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-dashed border-border bg-secondary/50 p-4 transition hover:border-primary/50">
@@ -203,7 +239,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
         <div className="animate-in fade-in slide-in-from-bottom-2 rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-accent/40 to-card p-5 shadow-soft">
           <div className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
             <CheckCircle2 className="h-5 w-5" />
-            ملخص الحالة
+            الملخص السريري
           </div>
           <p className="text-base leading-relaxed text-foreground">{summary}</p>
           <div className="mt-4 flex flex-wrap gap-2">
