@@ -17,7 +17,7 @@ export interface BookingData {
   medical: Record<string, string>;
   attachmentName?: string;
   preferences: {
-    gender: "male" | "female" | "any" | null;
+    expertise: "mid" | "high" | "expert" | null;
     time: "morning" | "evening" | "flexible" | null;
   };
 }
@@ -28,5 +28,5 @@ export const initialData: BookingData = {
   companion: { name: "", phone: "" },
   service: null,
   medical: {},
-  preferences: { gender: null, time: null },
+  preferences: { expertise: null, time: null },
 };
