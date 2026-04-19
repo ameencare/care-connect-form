@@ -93,6 +93,13 @@ const flow: Record<ConditionId, Question[]> = {
   ],
 };
 
+const durationMap: Record<string, string> = {
+  "أقل من أسبوع": "حاد",
+  "من أسبوع إلى أقل من شهر": "حاد",
+  "من شهر إلى 3 أشهر": "شبه حاد",
+  "أكثر من 3 أشهر": "مزمن",
+};
+
 function buildSummary(d: BookingData): string {
   const p = d.medical.problem as ConditionId | undefined;
   const m = d.medical;
@@ -100,25 +107,22 @@ function buildSummary(d: BookingData): string {
   if (p === "pain") {
     const rest = m.rest === "نعم" ? "ويتحسن مع الراحة" : m.rest === "لا" ? "ولا يتحسن مع الراحة" : "";
     const diag = m.diagnosed === "نعم" ? "تم تشخيص الحالة طبياً" : "لم يتم التشخيص الطبي بعد";
-    const durationMap: Record<string, string> = {
-      "أقل من أسبوع": "ألم حاد",
-      "من أسبوع إلى أقل من شهر": "ألم حاد",
-      "من شهر إلى 3 أشهر": "ألم شبه حاد",
-      "أكثر من 3 أشهر": "ألم مزمن",
-    };
-    const clinicalType = m.duration ? durationMap[m.duration] : "";
+    const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "";
     const painDescriptor = clinicalType ? `${clinicalType} (${m.painType || "—"})` : `ألم ${m.painType || "—"}`;
     return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
-    return `يعاني المريض من إصابة في ${m.place || "—"} منذ ${m.when || "—"}، ${op}، ومستوى الحركة الحالي: ${m.movement || "—"}.`;
+    const phase = m.when ? ` (إصابة ${durationMap[m.when]})` : "";
+    return `يعاني المريض من إصابة في ${m.place || "—"} منذ ${m.when || "—"}${phase}، ${op}، ومستوى الحركة الحالي: ${m.movement || "—"}.`;
   }
   if (p === "mobility") {
-    return `يعاني المريض من ${m.issueType || "—"} منذ ${m.since || "—"}، مستوى الحركة: ${m.movement || "—"}، الأدوات المساعدة: ${m.aid || "—"}.`;
+    const phase = m.since ? ` (حالة ${durationMap[m.since]})` : "";
+    return `يعاني المريض من ${m.issueType || "—"} منذ ${m.since || "—"}${phase}، مستوى الحركة: ${m.movement || "—"}، الأدوات المساعدة: ${m.aid || "—"}.`;
   }
   if (p === "post_op") {
-    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}، مستوى الألم: ${m.severity || "—"}، ومستوى الحركة: ${m.movement || "—"}.`;
+    const phase = m.when ? ` (مرحلة ${durationMap[m.when]})` : "";
+    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}${phase}، مستوى الألم: ${m.severity || "—"}، ومستوى الحركة: ${m.movement || "—"}.`;
   }
   if (p === "speech") {
     return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"} بدرجة ${m.severity || "—"}، مما يسبب ${m.impact || "—"}.`;
