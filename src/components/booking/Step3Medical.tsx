@@ -2,8 +2,18 @@ import { useMemo, useState } from "react";
 import { OptionCard } from "./OptionCard";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, Bone, Activity, MessageCircle, Apple, Upload, FileCheck2, Edit3, CheckCircle2 } from "lucide-react";
-import type { BookingData, ProblemType } from "./types";
+import {
+  AlertCircle,
+  Bone,
+  Activity,
+  MessageCircle,
+  Apple,
+  Upload,
+  FileCheck2,
+  Edit3,
+  CheckCircle2,
+} from "lucide-react";
+import type { BookingData, ServiceType } from "./types";
 
 interface Props {
   data: BookingData;
@@ -12,68 +22,88 @@ interface Props {
   setConfirmed: (v: boolean) => void;
 }
 
-const problems: { id: ProblemType; title: string; icon: React.ReactNode }[] = [
+type ConditionId = "pain" | "fracture" | "mobility" | "speech" | "nutrition";
+
+const allConditions: { id: ConditionId; title: string; icon: React.ReactNode }[] = [
   { id: "pain", title: "ألم", icon: <AlertCircle className="h-6 w-6" /> },
-  { id: "fracture", title: "كسر", icon: <Bone className="h-6 w-6" /> },
-  { id: "weakness", title: "ضعف حركي", icon: <Activity className="h-6 w-6" /> },
+  { id: "fracture", title: "كسر / إصابة", icon: <Bone className="h-6 w-6" /> },
+  { id: "mobility", title: "ضعف حركي / تأهيل", icon: <Activity className="h-6 w-6" /> },
   { id: "speech", title: "مشكلة في النطق أو البلع", icon: <MessageCircle className="h-6 w-6" /> },
   { id: "nutrition", title: "مشكلة غذائية", icon: <Apple className="h-6 w-6" /> },
 ];
 
-const flow: Record<string, { key: string; label: string; options: string[] }[]> = {
-  fracture: [
-    { key: "surgery", label: "هل تم إجراء عملية؟", options: ["نعم", "لا"] },
-    { key: "when", label: "متى حدث الكسر؟", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
-    { key: "place", label: "مكان الكسر؟", options: ["اليد", "الرجل", "الظهر", "أخرى"] },
-  ],
+const serviceToConditions: Record<NonNullable<ServiceType>, ConditionId[]> = {
+  physio: ["pain", "fracture", "mobility"],
+  occupational: ["pain", "fracture", "mobility"],
+  speech: ["speech"],
+  nutrition: ["nutrition"],
+};
+
+const flow: Record<ConditionId, { key: string; label: string; options: string[] }[]> = {
   pain: [
-    { key: "place", label: "مكان الألم؟", options: ["الظهر", "الركبة", "الرقبة", "الكتف"] },
-    { key: "duration", label: "مدة الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
-    { key: "severity", label: "شدة الألم؟", options: ["خفيف", "متوسط", "شديد"] },
+    { key: "painType", label: "نوع الألم", options: ["حاد", "نابض", "حارق", "شد عضلي", "تنميل"] },
+    { key: "place", label: "مكان الألم", options: ["الظهر", "الركبة", "الرقبة", "الكتف", "أخرى"] },
+    { key: "duration", label: "مدة الألم", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
+    { key: "severity", label: "شدة الألم", options: ["خفيف", "متوسط", "شديد"] },
+    { key: "impact", label: "التأثير على النشاط", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
   ],
-  weakness: [
-    { key: "walk", label: "هل يستطيع المشي؟", options: ["نعم", "بمساعدة", "لا"] },
-    { key: "wheelchair", label: "هل يستخدم كرسي متحرك؟", options: ["نعم", "لا"] },
-    { key: "since", label: "منذ متى بدأت الحالة؟", options: ["أقل من شهر", "أكثر من شهر"] },
+  fracture: [
+    { key: "place", label: "مكان الإصابة", options: ["يد", "رجل", "ظهر", "أخرى"] },
+    { key: "when", label: "متى حدثت الإصابة", options: ["أقل من أسبوع", "من أسبوع إلى شهر", "أكثر من شهر"] },
+    { key: "surgery", label: "هل تم إجراء عملية", options: ["نعم", "لا"] },
+    { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
+  ],
+  mobility: [
+    { key: "mainIssue", label: "المشكلة الرئيسية", options: ["صعوبة في المشي", "ضعف عضلي", "بعد عملية", "بعد جلطة"] },
+    { key: "since", label: "مدة الحالة", options: ["أقل من شهر", "أكثر من شهر"] },
+    { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "بمساعدة", "لا يستطيع المشي"] },
+    { key: "aid", label: "استخدام أدوات مساعدة", options: ["كرسي متحرك", "عكاز", "لا يوجد"] },
   ],
   speech: [
-    { key: "speak", label: "هل توجد صعوبة في الكلام؟", options: ["نعم", "لا"] },
-    { key: "swallow", label: "هل توجد صعوبة في البلع؟", options: ["نعم", "لا"] },
-    { key: "since", label: "منذ متى؟", options: ["أقل من شهر", "أكثر من شهر"] },
+    { key: "mainIssue", label: "المشكلة الأساسية", options: ["صعوبة في الكلام", "صعوبة في البلع", "الاثنين"] },
+    { key: "since", label: "متى بدأت المشكلة", options: ["أقل من شهر", "أكثر من شهر"] },
+    { key: "severity", label: "شدة المشكلة", options: ["خفيفة", "متوسطة", "شديدة"] },
+    { key: "impact", label: "التأثير", options: ["صعوبة في التواصل", "صعوبة في الأكل", "كلاهما"] },
   ],
   nutrition: [
-    { key: "goal", label: "الهدف؟", options: ["زيادة وزن", "إنقاص وزن", "تنظيم غذائي"] },
-    { key: "chronic", label: "هل توجد أمراض مزمنة؟", options: ["نعم", "لا"] },
-    { key: "diet", label: "هل يتبع حمية حالياً؟", options: ["نعم", "لا"] },
+    { key: "goal", label: "الهدف", options: ["زيادة وزن", "إنقاص وزن", "تنظيم غذائي"] },
+    { key: "chronic", label: "هل يوجد مرض مزمن", options: ["سكري", "ضغط", "لا يوجد", "أخرى"] },
+    { key: "adherence", label: "الالتزام الغذائي", options: ["منتظم", "غير منتظم"] },
+    { key: "duration", label: "مدة المشكلة", options: ["أقل من شهر", "أكثر من شهر"] },
   ],
 };
 
 function buildSummary(d: BookingData): string {
-  const p = d.medical.problem as ProblemType;
+  const p = d.medical.problem as ConditionId | undefined;
   const m = d.medical;
   if (!p) return "";
+  if (p === "pain") {
+    return `يعاني المريض من ألم ${m.painType || ""} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، والتأثير على النشاط: ${m.impact || "—"}.`;
+  }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
-    return `يعاني المريض من كسر في ${m.place || "—"} منذ ${m.when || "—"}، ${op}، ويحتاج إلى جلسات علاج طبيعي.`;
+    return `يعاني المريض من إصابة في ${m.place || "—"} منذ ${m.when || "—"}، ${op}، ومستوى الحركة: ${m.movement || "—"}.`;
   }
-  if (p === "pain") {
-    return `يعاني المريض من ألم ${m.severity || ""} في ${m.place || "—"} منذ ${m.duration || "—"}.`;
-  }
-  if (p === "weakness") {
-    return `يعاني المريض من ضعف حركي منذ ${m.since || "—"}، القدرة على المشي: ${m.walk || "—"}، استخدام كرسي متحرك: ${m.wheelchair || "—"}.`;
+  if (p === "mobility") {
+    return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"}، مستوى الحركة: ${m.movement || "—"}، الأدوات المساعدة: ${m.aid || "—"}.`;
   }
   if (p === "speech") {
-    return `يعاني المريض من مشكلة في النطق/البلع منذ ${m.since || "—"} (صعوبة كلام: ${m.speak || "—"}، صعوبة بلع: ${m.swallow || "—"}).`;
+    return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"} بدرجة ${m.severity || "—"}، مما يسبب ${m.impact || "—"}.`;
   }
   if (p === "nutrition") {
-    return `المريض يحتاج إلى ${m.goal || "—"}، أمراض مزمنة: ${m.chronic || "—"}، يتبع حمية حالياً: ${m.diet || "—"}.`;
+    return `يسعى المريض إلى ${m.goal || "—"}، الأمراض المزمنة: ${m.chronic || "—"}، الالتزام الغذائي: ${m.adherence || "—"} منذ ${m.duration || "—"}.`;
   }
   return "";
 }
 
 export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
-  const problem = data.medical.problem as ProblemType;
-  const questions = problem ? flow[problem] : [];
+  const service = data.service;
+  const availableIds = service ? serviceToConditions[service] : [];
+  const conditions = allConditions.filter((c) => availableIds.includes(c.id));
+
+  const problem = data.medical.problem as ConditionId | undefined;
+  const problemValid = problem && availableIds.includes(problem);
+  const questions = problemValid ? flow[problem!] : [];
   const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]);
   const summary = useMemo(() => buildSummary(data), [data]);
   const [fileName, setFileName] = useState<string | undefined>(data.attachmentName);
@@ -83,6 +113,19 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
     setConfirmed(false);
   };
 
+  // Auto-select the only condition if there's just one
+  if (service && conditions.length === 1 && problem !== conditions[0].id) {
+    update({ medical: { problem: conditions[0].id } });
+  }
+
+  if (!service) {
+    return (
+      <div className="rounded-2xl border-2 border-dashed border-border bg-secondary/30 p-6 text-center">
+        <p className="text-muted-foreground">يرجى اختيار الخدمة أولاً من الخطوة السابقة.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -90,18 +133,23 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
         <p className="mt-1 text-muted-foreground">ما نوع المشكلة الصحية؟</p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        {problems.map((p) => (
-          <OptionCard
-            key={p.id}
-            selected={problem === p.id}
-            onClick={() => update({ medical: { problem: p.id! } })}
-            title={p.title}
-            icon={p.icon}
-            compact
-          />
-        ))}
-      </div>
+      {conditions.length > 1 && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {conditions.map((p) => (
+            <OptionCard
+              key={p.id}
+              selected={problem === p.id}
+              onClick={() => {
+                update({ medical: { problem: p.id } });
+                setConfirmed(false);
+              }}
+              title={p.title}
+              icon={p.icon}
+              compact
+            />
+          ))}
+        </div>
+      )}
 
       {questions.map((q) => (
         <div key={q.key} className="animate-in fade-in slide-in-from-bottom-2 space-y-3">
