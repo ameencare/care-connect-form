@@ -110,7 +110,11 @@ function buildSummary(d: BookingData): string {
     const diag = m.diagnosed === "نعم" ? "تم تشخيص الحالة طبياً" : "لم يتم التشخيص الطبي بعد";
     const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "";
     const painDescriptor = clinicalType ? `${clinicalType} (${m.painType || "—"})` : `ألم ${m.painType || "—"}`;
-    return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
+    const severityText =
+      m.severity !== undefined && m.severity !== ""
+        ? `بدرجة ${m.severity} من 10 (${classifyNPRS(Number(m.severity)).label})`
+        : "بدرجة —";
+    return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} ${severityText}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
