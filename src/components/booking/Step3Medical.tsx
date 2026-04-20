@@ -207,25 +207,32 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
             )}
             <div className="animate-in fade-in slide-in-from-bottom-2 space-y-3">
               <Label className="text-base font-semibold">{q.label}</Label>
-              <div className="flex flex-wrap gap-2">
-                {q.options.map((opt) => {
-                  const active = data.medical[q.key] === opt;
-                  return (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => setAnswer(q.key, opt)}
-                      className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
-                        active
-                          ? "border-primary bg-gradient-brand text-white shadow-soft"
-                          : "border-border bg-card text-foreground hover:border-primary/50"
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  );
-                })}
-              </div>
+              {q.options.length === 0 && q.key === "severity" ? (
+                <NPRSSlider
+                  value={data.medical[q.key]}
+                  onChange={(v) => setAnswer(q.key, v)}
+                />
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {q.options.map((opt) => {
+                    const active = data.medical[q.key] === opt;
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => setAnswer(q.key, opt)}
+                        className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
+                          active
+                            ? "border-primary bg-gradient-brand text-white shadow-soft"
+                            : "border-border bg-card text-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         );
