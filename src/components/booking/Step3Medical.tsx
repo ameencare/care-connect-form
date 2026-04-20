@@ -77,7 +77,7 @@ const flow: Record<ConditionId, Question[]> = {
   post_op: [
     { key: "surgeryType", label: "نوع العملية", options: ["ركبة", "ورك", "ظهر", "كتف", "أخرى"] },
     { key: "when", label: "متى تمت العملية", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { key: "severity", label: "مستوى الألم", options: ["خفيف", "متوسط", "شديد"] },
+    { key: "severity", label: "كم شدة الألم لديك الآن؟", options: [] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
   ],
   speech: [
@@ -127,7 +127,11 @@ function buildSummary(d: BookingData): string {
   }
   if (p === "post_op") {
     const phase = m.when ? ` (مرحلة ${durationMap[m.when]})` : "";
-    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}${phase}، مستوى الألم: ${m.severity || "—"}، ومستوى الحركة: ${m.movement || "—"}.`;
+    const severityText =
+      m.severity !== undefined && m.severity !== ""
+        ? `بدرجة ${m.severity} من 10 (${classifyNPRS(Number(m.severity)).label})`
+        : "بدرجة —";
+    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}${phase}، مستوى الألم ${severityText}، ومستوى الحركة: ${m.movement || "—"}.`;
   }
   if (p === "speech") {
     return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"} بدرجة ${m.severity || "—"}، مما يسبب ${m.impact || "—"}.`;
