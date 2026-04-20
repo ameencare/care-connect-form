@@ -77,7 +77,7 @@ const flow: Record<ConditionId, Question[]> = {
   post_op: [
     { key: "surgeryType", label: "نوع العملية", options: ["ركبة", "ورك", "ظهر", "كتف", "أخرى"] },
     { key: "when", label: "متى تمت العملية", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { key: "severity", label: "مستوى الألم", options: ["خفيف", "متوسط", "شديد"] },
+    { key: "severity", label: "كم شدة الألم لديك الآن؟", options: [] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
   ],
   speech: [
