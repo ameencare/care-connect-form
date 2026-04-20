@@ -8,7 +8,6 @@ interface PainLevel {
   range: string;
   label: string;
   description: string;
-  emoji: string;
   activeClass: string;
   idleClass: string;
   feedbackClass: string;
@@ -112,7 +111,6 @@ export function NPRSSlider({ value, onChange }: Props) {
               aria-pressed={active}
               aria-label={lvl.label}
             >
-              <span className="text-3xl leading-none">{lvl.emoji}</span>
               <span className="text-base font-extrabold">{lvl.label}</span>
               <span className={`text-xs font-semibold ${active ? "opacity-90" : "opacity-70"}`}>{lvl.range}</span>
             </button>
