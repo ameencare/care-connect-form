@@ -141,7 +141,9 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
   const problem = data.medical.problem as ConditionId | undefined;
   const problemValid = problem && availableIds.includes(problem);
   const questions = problemValid ? flow[problem!] : [];
-  const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]);
+  const requiresAttachment = problem === "fracture" || problem === "post_op";
+  const attachmentOk = !requiresAttachment || !!data.attachmentName;
+  const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]) && attachmentOk;
   const summary = useMemo(() => buildSummary(data), [data]);
   const [fileName, setFileName] = useState<string | undefined>(data.attachmentName);
 
@@ -226,8 +228,10 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
 
       {(problem === "fracture" || problem === "post_op") && (
         <div className="animate-in fade-in space-y-2">
-          <Label className="text-sm font-semibold">إرفاق تقرير طبي (اختياري)</Label>
-          <label className="flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-dashed border-border bg-secondary/50 p-4 transition hover:border-primary/50">
+          <Label className="text-sm font-semibold">
+            إرفاق تقرير طبي <span className="text-destructive">(إلزامي)</span>
+          </Label>
+          <label className={`flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-dashed p-4 transition ${fileName ? "border-primary/50 bg-secondary/50" : "border-destructive/50 bg-destructive/5 hover:border-destructive"}`}>
             {fileName ? <FileCheck2 className="h-6 w-6 text-primary" /> : <Upload className="h-6 w-6 text-muted-foreground" />}
             <span className="text-sm text-muted-foreground">
               {fileName || "اضغط لاختيار ملف"}
