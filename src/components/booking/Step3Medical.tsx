@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { OptionCard } from "./OptionCard";
+import { NPRSSlider, classifyNPRS } from "./NPRSSlider";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -53,7 +54,7 @@ const flow: Record<ConditionId, Question[]> = {
     { section: "خصائص العَرَض", key: "painType", label: "نوع الألم", options: ["حاد", "نابض", "حارق", "شد عضلي", "تنميل"] },
     { key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
     { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { key: "severity", label: "شدة الألم", options: ["خفيفة", "متوسطة", "شديدة"] },
+    { key: "severity", label: "كم شدة الألم لديك الآن؟", options: [], section: undefined },
     { section: "سلوك الأعراض", key: "aggravating", label: "متى يزيد الألم؟", options: ["عند الحركة", "عند الجلوس", "عند الوقوف", "مستمر"] },
     { key: "rest", label: "هل يتحسن مع الراحة؟", options: ["نعم", "لا"] },
     { section: "التأثير الوظيفي", key: "impact", label: "هل يؤثر على الأنشطة اليومية؟", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
@@ -109,7 +110,11 @@ function buildSummary(d: BookingData): string {
     const diag = m.diagnosed === "نعم" ? "تم تشخيص الحالة طبياً" : "لم يتم التشخيص الطبي بعد";
     const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "";
     const painDescriptor = clinicalType ? `${clinicalType} (${m.painType || "—"})` : `ألم ${m.painType || "—"}`;
-    return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} بدرجة ${m.severity || "—"}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
+    const severityText =
+      m.severity !== undefined && m.severity !== ""
+        ? `بدرجة ${m.severity} من 10 (${classifyNPRS(Number(m.severity)).label})`
+        : "بدرجة —";
+    return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} ${severityText}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
@@ -202,25 +207,32 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
             )}
             <div className="animate-in fade-in slide-in-from-bottom-2 space-y-3">
               <Label className="text-base font-semibold">{q.label}</Label>
-              <div className="flex flex-wrap gap-2">
-                {q.options.map((opt) => {
-                  const active = data.medical[q.key] === opt;
-                  return (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => setAnswer(q.key, opt)}
-                      className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
-                        active
-                          ? "border-primary bg-gradient-brand text-white shadow-soft"
-                          : "border-border bg-card text-foreground hover:border-primary/50"
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  );
-                })}
-              </div>
+              {q.options.length === 0 && q.key === "severity" ? (
+                <NPRSSlider
+                  value={data.medical[q.key]}
+                  onChange={(v) => setAnswer(q.key, v)}
+                />
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {q.options.map((opt) => {
+                    const active = data.medical[q.key] === opt;
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => setAnswer(q.key, opt)}
+                        className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
+                          active
+                            ? "border-primary bg-gradient-brand text-white shadow-soft"
+                            : "border-border bg-card text-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         );
