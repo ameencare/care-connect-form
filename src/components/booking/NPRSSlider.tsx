@@ -1,97 +1,102 @@
-import { Slider } from "@/components/ui/slider";
-
 interface Props {
   value?: string;
   onChange: (value: string) => void;
 }
 
 export function classifyNPRS(n: number): { label: string; description: string } {
-  if (n === 0) return { label: "لا يوجد ألم", description: "لا يوجد ألم" };
+  if (n === 0) return { label: "لا يوجد ألم", description: "لا تشعر بأي ألم حالياً" };
   if (n <= 3)
     return {
       label: "ألم خفيف",
-      description: "ألم خفيف — يمكنك القيام بأنشطتك اليومية بشكل طبيعي",
+      description: "يمكنك القيام بأنشطتك اليومية بشكل طبيعي",
     };
   if (n <= 6)
     return {
       label: "ألم متوسط",
-      description: "ألم متوسط — يسبب إزعاج وقد يؤثر على بعض الأنشطة",
+      description: "يسبب إزعاج وقد يؤثر على بعض الأنشطة",
     };
   return {
     label: "ألم شديد",
-    description: "ألم شديد — يؤثر بشكل كبير على الحركة أو النوم أو النشاط اليومي",
+    description: "يؤثر بشكل كبير على الحركة أو النوم أو النشاط اليومي",
   };
+}
+
+function colorsFor(n: number, active: boolean) {
+  if (n === 0)
+    return active
+      ? "bg-gradient-to-br from-slate-400 to-slate-600 text-white border-slate-600 shadow-lg"
+      : "bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-400 dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-700";
+  if (n <= 3)
+    return active
+      ? "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white border-emerald-600 shadow-lg"
+      : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:border-emerald-400 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-900";
+  if (n <= 6)
+    return active
+      ? "bg-gradient-to-br from-amber-400 to-amber-600 text-white border-amber-600 shadow-lg"
+      : "bg-amber-50 text-amber-700 border-amber-200 hover:border-amber-400 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-900";
+  return active
+    ? "bg-gradient-to-br from-red-500 to-red-700 text-white border-red-700 shadow-lg"
+    : "bg-red-50 text-red-700 border-red-200 hover:border-red-400 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900";
+}
+
+function feedbackColors(n: number) {
+  if (n === 0) return "border-slate-300 bg-slate-50 text-slate-800 dark:bg-slate-900/40 dark:text-slate-200 dark:border-slate-700";
+  if (n <= 3) return "border-emerald-300 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800";
+  if (n <= 6) return "border-amber-300 bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200 dark:border-amber-800";
+  return "border-red-300 bg-red-50 text-red-900 dark:bg-red-950/40 dark:text-red-200 dark:border-red-800";
 }
 
 export function NPRSSlider({ value, onChange }: Props) {
   const hasValue = value !== undefined && value !== "";
-  const numeric = hasValue ? Number(value) : 0;
-  const { label, description } = classifyNPRS(numeric);
-
-  const colorClass =
-    numeric === 0
-      ? "from-emerald-500 to-emerald-600"
-      : numeric <= 3
-        ? "from-emerald-500 to-lime-500"
-        : numeric <= 6
-          ? "from-amber-500 to-orange-500"
-          : "from-orange-600 to-red-600";
+  const numeric = hasValue ? Number(value) : -1;
+  const info = hasValue ? classifyNPRS(numeric) : null;
 
   return (
     <div className="space-y-5 rounded-2xl border-2 border-border bg-card p-5 shadow-soft">
-      <div className="flex flex-col items-center gap-2">
-        <div
-          className={`flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br ${colorClass} text-4xl font-extrabold text-white shadow-soft transition-all`}
-        >
-          {hasValue ? numeric : "—"}
+      {/* Anchor reference */}
+      <div className="flex items-center justify-between gap-3 text-xs font-medium">
+        <div className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
+          <span className="font-bold">0</span>
+          <span>= لا يوجد ألم</span>
         </div>
-        <div className="text-sm font-semibold text-muted-foreground">
-          {hasValue ? `${numeric} / 10 — ${label}` : "اسحب لتحديد شدة الألم"}
+        <div className="flex items-center gap-2 rounded-lg bg-red-100 px-3 py-2 text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          <span className="font-bold">10</span>
+          <span>= أسوأ ألم ممكن تتخيله</span>
         </div>
       </div>
 
-      <div className="px-2">
-        <Slider
-          value={[numeric]}
-          min={0}
-          max={10}
-          step={1}
-          onValueChange={(v) => onChange(String(v[0]))}
-          dir="ltr"
-        />
-        <div className="mt-2 flex justify-between text-xs font-medium text-muted-foreground">
-          {Array.from({ length: 11 }, (_, i) => (
-            <span key={i} className={numeric === i && hasValue ? "text-primary font-bold" : ""}>
+      {/* Number buttons */}
+      <div className="grid grid-cols-6 gap-2 sm:grid-cols-11" dir="ltr">
+        {Array.from({ length: 11 }, (_, i) => {
+          const active = numeric === i;
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onChange(String(i))}
+              className={`flex aspect-square items-center justify-center rounded-2xl border-2 text-2xl font-extrabold transition-all duration-200 active:scale-95 ${colorsFor(
+                i,
+                active,
+              )} ${active ? "scale-110 z-10" : "hover:scale-105"}`}
+              aria-pressed={active}
+              aria-label={`شدة الألم ${i}`}
+            >
               {i}
-            </span>
-          ))}
-        </div>
+            </button>
+          );
+        })}
       </div>
 
-      <div className="flex items-start justify-between gap-3 text-xs">
-        <div className="flex-1 rounded-lg bg-emerald-500/10 px-3 py-2 text-emerald-700 dark:text-emerald-400">
-          <div className="font-bold">0</div>
-          <div>لا يوجد ألم</div>
-        </div>
-        <div className="flex-1 rounded-lg bg-red-500/10 px-3 py-2 text-right text-red-700 dark:text-red-400">
-          <div className="font-bold">10</div>
-          <div>أسوأ ألم ممكن تتخيله</div>
-        </div>
-      </div>
-
-      {hasValue && (
+      {/* Feedback */}
+      {info && (
         <div
-          className={`animate-in fade-in rounded-xl border-2 p-3 text-sm font-medium ${
-            numeric === 0
-              ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400"
-              : numeric <= 3
-                ? "border-lime-500/30 bg-lime-500/5 text-lime-700 dark:text-lime-400"
-                : numeric <= 6
-                  ? "border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400"
-                  : "border-red-500/30 bg-red-500/5 text-red-700 dark:text-red-400"
-          }`}
+          key={numeric}
+          className={`animate-in fade-in zoom-in-95 rounded-2xl border-2 p-4 text-center ${feedbackColors(numeric)}`}
         >
-          {description}
+          <div className="text-2xl font-extrabold">
+            {numeric} / 10 — {info.label}
+          </div>
+          <div className="mt-1 text-sm font-medium opacity-90">{info.description}</div>
         </div>
       )}
     </div>
