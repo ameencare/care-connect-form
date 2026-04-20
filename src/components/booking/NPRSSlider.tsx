@@ -8,7 +8,6 @@ interface PainLevel {
   range: string;
   label: string;
   description: string;
-  emoji: string;
   activeClass: string;
   idleClass: string;
   feedbackClass: string;
@@ -20,7 +19,6 @@ const levels: PainLevel[] = [
     range: "0",
     label: "لا يوجد ألم",
     description: "لا تشعر بأي ألم حالياً",
-    emoji: "😀",
     activeClass: "bg-gradient-to-br from-slate-400 to-slate-600 text-white border-slate-600 shadow-lg",
     idleClass:
       "bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-400 dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-700",
@@ -32,7 +30,6 @@ const levels: PainLevel[] = [
     range: "1 – 3",
     label: "ألم خفيف",
     description: "يمكنك القيام بأنشطتك اليومية بشكل طبيعي",
-    emoji: "🙂",
     activeClass: "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white border-emerald-600 shadow-lg",
     idleClass:
       "bg-emerald-50 text-emerald-700 border-emerald-200 hover:border-emerald-400 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-900",
@@ -44,7 +41,6 @@ const levels: PainLevel[] = [
     range: "4 – 6",
     label: "ألم متوسط",
     description: "يسبب إزعاج وقد يؤثر على بعض الأنشطة",
-    emoji: "😣",
     activeClass: "bg-gradient-to-br from-amber-400 to-amber-600 text-white border-amber-600 shadow-lg",
     idleClass:
       "bg-amber-50 text-amber-700 border-amber-200 hover:border-amber-400 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-900",
@@ -56,7 +52,6 @@ const levels: PainLevel[] = [
     range: "7 – 10",
     label: "ألم شديد",
     description: "يؤثر بشكل كبير على الحركة أو النوم أو النشاط اليومي",
-    emoji: "😫",
     activeClass: "bg-gradient-to-br from-red-500 to-red-700 text-white border-red-700 shadow-lg",
     idleClass:
       "bg-red-50 text-red-700 border-red-200 hover:border-red-400 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900",
@@ -112,7 +107,6 @@ export function NPRSSlider({ value, onChange }: Props) {
               aria-pressed={active}
               aria-label={lvl.label}
             >
-              <span className="text-3xl leading-none">{lvl.emoji}</span>
               <span className="text-base font-extrabold">{lvl.label}</span>
               <span className={`text-xs font-semibold ${active ? "opacity-90" : "opacity-70"}`}>{lvl.range}</span>
             </button>
