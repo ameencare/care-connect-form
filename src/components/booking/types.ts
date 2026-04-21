@@ -20,7 +20,7 @@ export interface BookingData {
   attachmentName?: string;
   preferences: {
     gender: "male" | "female" | "any" | null;
-    time: "morning" | "evening" | "flexible" | null;
+    time: "morning" | "noon" | "afternoon" | "evening" | "flexible" | null;
     expertise: "junior" | "senior" | "expert" | null;
   };
 }
