@@ -20,6 +20,7 @@ export interface BookingData {
   preferences: {
     gender: "male" | "female" | "any" | null;
     time: "morning" | "evening" | "flexible" | null;
+    expertise: "junior" | "senior" | "expert" | null;
   };
 }
 
@@ -29,5 +30,5 @@ export const initialData: BookingData = {
   companion: { name: "", phone: "" },
   service: null,
   medical: {},
-  preferences: { gender: null, time: null },
+  preferences: { gender: null, time: null, expertise: null },
 };
