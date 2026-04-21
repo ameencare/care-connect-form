@@ -49,39 +49,51 @@ const serviceToConditions: Record<NonNullable<ServiceType>, ConditionId[]> = {
   nutrition: ["nutrition"],
 };
 
+const chronicQuestion: Question = {
+  section: "السياق الطبي",
+  key: "chronic",
+  label: "هل لديك أمراض مزمنة؟",
+  options: ["ارتفاع ضغط الدم", "السكري", "السمنة", "أمراض القلب", "الربو", "هشاشة العظام", "لا يوجد"],
+};
+
 const flow: Record<ConditionId, Question[]> = {
   pain: [
     { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
     { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { section: "التأثير الوظيفي", key: "impact", label: "هل يؤثر على الأنشطة اليومية؟", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
     { section: "السياق الطبي", key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
+    chronicQuestion,
   ],
   fracture: [
     { key: "place", label: "مكان الإصابة", options: ["اليد", "الرجل", "الظهر", "الكتف", "أخرى"] },
     { key: "when", label: "وقت الإصابة", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { key: "surgery", label: "هل تم إجراء عملية؟", options: ["نعم", "لا"] },
     { key: "movement", label: "مستوى الحركة الحالي", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
+    chronicQuestion,
   ],
   mobility: [
     { key: "issueType", label: "نوع المشكلة", options: ["ضعف عضلي", "مشكلة توازن", "صعوبة في المشي"] },
     { key: "since", label: "مدة الحالة", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "بمساعدة", "لا يستطيع المشي"] },
     { key: "aid", label: "استخدام أدوات مساعدة", options: ["كرسي متحرك", "عكاز", "مشاية", "لا يوجد"] },
+    chronicQuestion,
   ],
   post_op: [
     { key: "surgeryType", label: "نوع العملية", options: ["ركبة", "ورك", "ظهر", "كتف", "أخرى"] },
     { key: "when", label: "متى تمت العملية", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
+    chronicQuestion,
   ],
   speech: [
     { key: "mainIssue", label: "المشكلة الأساسية", options: ["صعوبة في الكلام", "صعوبة في البلع", "الاثنين"] },
     { key: "since", label: "متى بدأت المشكلة", options: ["أقل من شهر", "أكثر من شهر"] },
     { key: "severity", label: "شدة المشكلة", options: ["خفيفة", "متوسطة", "شديدة"] },
     { key: "impact", label: "التأثير", options: ["صعوبة في التواصل", "صعوبة في الأكل", "كلاهما"] },
+    chronicQuestion,
   ],
   nutrition: [
     { key: "goal", label: "الهدف", options: ["زيادة وزن", "إنقاص وزن", "تنظيم غذائي"] },
-    { key: "chronic", label: "هل يوجد مرض مزمن", options: ["سكري", "ضغط", "لا يوجد", "أخرى"] },
+    chronicQuestion,
     { key: "adherence", label: "الالتزام الغذائي", options: ["منتظم", "غير منتظم"] },
     { key: "duration", label: "مدة المشكلة", options: ["أقل من شهر", "أكثر من شهر"] },
   ],
