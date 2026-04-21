@@ -33,27 +33,27 @@ export function Step4Preferences({ data, update }: { data: BookingData; update: 
       )}
 
       <div className="space-y-3">
-        <Label className="text-base font-semibold">مستوى خبرة الأخصائي</Label>
+        <Label className="text-base font-semibold">مستوى خبرة الاخصائي</Label>
 
         <div className="grid gap-3">
           <OptionCard
             selected={data.preferences.expertise === "junior"}
             onClick={() => update({ preferences: { ...data.preferences, expertise: "junior" } })}
-            title={`أخصائي متوسط الخبرة (Junior)${recommendation?.level === "junior" ? " — مقترح" : ""}`}
+            title={`اخصائي متوسط الخبرة${recommendation?.level === "junior" ? " — مقترح" : ""}`}
             description="خبرة من 1 إلى 3 سنوات، مناسب للحالات العامة التي تحتاج دعماً أولياً. تكلفة الجلسة: 250 - 300 ريال."
             icon={<GraduationCap className="h-5 w-5" />}
           />
           <OptionCard
             selected={data.preferences.expertise === "senior"}
             onClick={() => update({ preferences: { ...data.preferences, expertise: "senior" } })}
-            title={`أخصائي عالي الخبرة (Senior)${recommendation?.level === "senior" ? " — مقترح" : ""}`}
+            title={`اخصائي عالي الخبرة${recommendation?.level === "senior" ? " — مقترح" : ""}`}
             description="خبرة من 4 إلى 9 سنوات، مناسب للحالات المتقدمة التي تتطلب خبرة أعمق. تكلفة الجلسة: 300 - 400 ريال."
             icon={<Award className="h-5 w-5" />}
           />
           <OptionCard
             selected={data.preferences.expertise === "expert"}
             onClick={() => update({ preferences: { ...data.preferences, expertise: "expert" } })}
-            title={`أخصائي خبير (Expert)${recommendation?.level === "expert" ? " — مقترح" : ""}`}
+            title={`اخصائي خبير${recommendation?.level === "expert" ? " — مقترح" : ""}`}
             description="خبرة فوق 10 سنوات، الخيار الأنسب للحالات المعقدة. تكلفة الجلسة: 400 - 500 ريال."
             icon={<Star className="h-5 w-5" />}
           />
