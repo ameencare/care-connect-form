@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const labels = ["بيانات الحجز", "الخدمة", "الحالة الصحية", "التفضيلات"];
+const labels = ["البيانات الشخصية", "الخدمة المطلوبة", "الحالة الصحية", "التفضيلات وتأكيد الحجز"];
 
 export function ProgressBar({ step, total }: { step: number; total: number }) {
   const pct = (step / total) * 100;
