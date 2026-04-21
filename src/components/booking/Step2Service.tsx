@@ -23,7 +23,7 @@ const services: { id: ServiceType; title: string; desc: string; icon: React.Reac
   },
   {
     id: "nutrition",
-    title: "تغذية علاجية",
+    title: "التغذية العلاجية",
     desc: "خطط غذائية مخصصة لحالتك",
     icon: <Apple className="h-6 w-6" />,
   },
