@@ -67,7 +67,7 @@ const flow: Record<ConditionId, Question[]> = {
   fracture: [
     { key: "place", label: "مكان الإصابة", options: ["اليد", "الرجل", "الظهر", "الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "أخرى"] },
     { key: "when", label: "وقت الإصابة", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { key: "surgery", label: "هل تم إجراء عملية؟", options: ["نعم", "لا"] },
+    { key: "surgery", label: "هل تم إجراء عملية تثبيت للكسر؟", options: ["نعم", "لا"] },
     { key: "movement", label: "مستوى الحركة الحالي", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
     chronicQuestion,
   ],
