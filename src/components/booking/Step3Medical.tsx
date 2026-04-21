@@ -60,7 +60,6 @@ const flow: Record<ConditionId, Question[]> = {
   pain: [
     { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
     { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { section: "التأثير الوظيفي", key: "impact", label: "هل يؤثر على الأنشطة اليومية؟", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
     { section: "السياق الطبي", key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
     chronicQuestion,
   ],
