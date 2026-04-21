@@ -1,5 +1,5 @@
 import { OptionCard } from "./OptionCard";
-import { User, UserRound, Users, Sun, Moon, Clock } from "lucide-react";
+import { User, UserRound, Users, Sun, Moon, Clock, GraduationCap, Award, Star } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import type { BookingData } from "./types";
 
@@ -38,6 +38,33 @@ export function Step4Preferences({ data, update }: { data: BookingData; update: 
           <OptionCard compact selected={data.preferences.time === "flexible"}
             onClick={() => update({ preferences: { ...data.preferences, time: "flexible" } })}
             title="مرن" icon={<Clock className="h-5 w-5" />} />
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Label className="text-base font-semibold">مستوى خبرة الأخصائي</Label>
+        <div className="grid gap-3">
+          <OptionCard
+            selected={data.preferences.expertise === "junior"}
+            onClick={() => update({ preferences: { ...data.preferences, expertise: "junior" } })}
+            title="أخصائي متوسط الخبرة (Junior)"
+            description="خبرة من 1 إلى 3 سنوات، مناسب للحالات العامة التي تحتاج دعماً أولياً. تكلفة الجلسة: 250 - 300 ريال."
+            icon={<GraduationCap className="h-5 w-5" />}
+          />
+          <OptionCard
+            selected={data.preferences.expertise === "senior"}
+            onClick={() => update({ preferences: { ...data.preferences, expertise: "senior" } })}
+            title="أخصائي عالي الخبرة (Senior)"
+            description="خبرة من 4 إلى 9 سنوات، مناسب للحالات المتقدمة التي تتطلب خبرة أعمق. تكلفة الجلسة: 300 - 400 ريال."
+            icon={<Award className="h-5 w-5" />}
+          />
+          <OptionCard
+            selected={data.preferences.expertise === "expert"}
+            onClick={() => update({ preferences: { ...data.preferences, expertise: "expert" } })}
+            title="أخصائي خبير (Expert)"
+            description="خبرة فوق 10 سنوات، الخيار الأنسب للحالات المعقدة. تكلفة الجلسة: 400 - 500 ريال."
+            icon={<Star className="h-5 w-5" />}
+          />
         </div>
       </div>
     </div>
