@@ -112,7 +112,7 @@ function buildSummary(d: BookingData): string {
   if (p === "pain") {
     const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "ألم";
     const prior = m.priorPT === "نعم" ? "وسبق له العلاج الطبيعي لنفس المشكلة" : m.priorPT === "لا" ? "ولم يسبق له العلاج الطبيعي لهذه المشكلة" : "";
-    return `يعاني المريض من ${clinicalType} في ${m.place || "—"} منذ ${m.duration || "—"}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ${prior}.`;
+    return `يعاني المريض من ${clinicalType} في ${m.place || "—"} منذ ${m.duration || "—"} ${prior}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
