@@ -55,7 +55,12 @@ export function Step2Service({ data, update }: { data: BookingData; update: (d: 
             selected={data.service === s.id}
             onClick={() => update({ service: s.id })}
             title={s.title}
-            description={s.desc}
+            description={
+              <span className="block space-y-1">
+                <span className="block text-muted-foreground">{s.about}</span>
+                <span className="block font-semibold text-primary">{s.price}</span>
+              </span>
+            }
             icon={s.icon}
           />
         ))}
