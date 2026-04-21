@@ -23,13 +23,13 @@ export function Step1Owner({ data, update }: Props) {
         <OptionCard
           selected={data.bookingFor === "self"}
           onClick={() => update({ bookingFor: "self" })}
-          title="نفسي"
+          title="لنفسي"
           icon={<User className="h-6 w-6" />}
         />
         <OptionCard
           selected={data.bookingFor === "companion"}
           onClick={() => update({ bookingFor: "companion" })}
-          title="شخص آخر"
+          title="لشخص آخر"
           icon={<Users className="h-6 w-6" />}
         />
       </div>
