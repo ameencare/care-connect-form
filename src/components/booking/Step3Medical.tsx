@@ -59,13 +59,13 @@ const chronicQuestion: Question = {
 
 const flow: Record<ConditionId, Question[]> = {
   pain: [
-    { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
+    { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "أخرى"] },
     { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { section: "السياق الطبي", key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
     chronicQuestion,
   ],
   fracture: [
-    { key: "place", label: "مكان الإصابة", options: ["اليد", "الرجل", "الظهر", "الكتف", "أخرى"] },
+    { key: "place", label: "مكان الإصابة", options: ["اليد", "الرجل", "الظهر", "الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "أخرى"] },
     { key: "when", label: "وقت الإصابة", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { key: "surgery", label: "هل تم إجراء عملية؟", options: ["نعم", "لا"] },
     { key: "movement", label: "مستوى الحركة الحالي", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
@@ -125,11 +125,30 @@ const problemTitleMap: Record<ConditionId, string> = {
 function buildSummary(d: BookingData): SummaryData | null {
   const p = d.medical.problem as ConditionId | undefined;
   if (!p) return null;
-  const qs = flow[p];
+  const qs = expandQuestions(flow[p], d.medical, p);
   const items = qs
     .filter((q) => d.medical[q.key])
     .map((q) => ({ label: q.label, value: d.medical[q.key] }));
   return { title: problemTitleMap[p], items };
+}
+
+const SIDED_LOCATIONS = new Set(["الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "اليد", "الرجل"]);
+
+function expandQuestions(base: Question[], medical: Record<string, string>, problem: ConditionId): Question[] {
+  const result: Question[] = [];
+  for (const q of base) {
+    result.push(q);
+    if (q.key === "place" && (problem === "pain" || problem === "fracture")) {
+      const loc = medical.place;
+      if (loc && SIDED_LOCATIONS.has(loc)) {
+        result.push({ key: "side", label: "الجهة", options: ["اليمين", "اليسار", "كلاهما"] });
+      }
+    }
+    if (q.key === "surgery" && problem === "fracture" && medical.surgery === "لا") {
+      result.push({ key: "fractureHealed", label: "هل التئم الكسر؟", options: ["نعم", "لا"] });
+    }
+  }
+  return result;
 }
 
 export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
@@ -139,7 +158,8 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
 
   const problem = data.medical.problem as ConditionId | undefined;
   const problemValid = problem && availableIds.includes(problem);
-  const questions = problemValid ? flow[problem!] : [];
+  const baseQuestions = problemValid ? flow[problem!] : [];
+  const questions = problemValid ? expandQuestions(baseQuestions, data.medical, problem!) : [];
   const requiresAttachment = problem === "fracture" || problem === "post_op";
   const attachmentOk = !requiresAttachment || !!data.attachmentName;
   const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]) && attachmentOk;
