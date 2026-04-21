@@ -316,7 +316,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
                 update({ medicalNote: e.target.value });
                 setConfirmed(false);
               }}
-              placeholder="اكتب أي تفاصيل إضافية من المريض أو المرافق هنا..."
+              placeholder="اكتب أي تفاصيل إضافية هنا..."
               className="min-h-[88px] rounded-xl bg-card"
             />
           </div>
