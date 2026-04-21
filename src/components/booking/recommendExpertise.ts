@@ -9,9 +9,9 @@ export interface Recommendation {
 }
 
 export const expertiseTitle: Record<ExpertiseLevel, string> = {
-  junior: "أخصائي متوسط الخبرة (Junior)",
-  senior: "أخصائي عالي الخبرة (Senior)",
-  expert: "أخصائي خبير (Expert)",
+  junior: "اخصائي متوسط الخبرة",
+  senior: "اخصائي عالي الخبرة",
+  expert: "اخصائي خبير",
 };
 
 const durationMap: Record<string, string> = {
