@@ -106,35 +106,28 @@ const durationMap: Record<string, string> = {
   "أكثر من 3 أشهر": "مزمن",
 };
 
-function buildSummary(d: BookingData): string {
+interface SummaryData {
+  title: string;
+  items: { label: string; value: string }[];
+}
+
+const problemTitleMap: Record<ConditionId, string> = {
+  pain: "ألم",
+  fracture: "إصابة / كسر",
+  mobility: "ضعف أو صعوبة في الحركة",
+  post_op: "بعد عملية جراحية",
+  speech: "مشكلة في النطق أو البلع",
+  nutrition: "مشكلة غذائية",
+};
+
+function buildSummary(d: BookingData): SummaryData | null {
   const p = d.medical.problem as ConditionId | undefined;
-  const m = d.medical;
-  if (!p) return "";
-  if (p === "pain") {
-    const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "ألم";
-    const prior = m.priorPT === "نعم" ? "وسبق له العلاج الطبيعي لنفس المشكلة" : m.priorPT === "لا" ? "ولم يسبق له العلاج الطبيعي لهذه المشكلة" : "";
-    return `يعاني المريض من ${clinicalType} في ${m.place || "—"} منذ ${m.duration || "—"} ${prior}.`;
-  }
-  if (p === "fracture") {
-    const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
-    const phase = m.when ? ` (إصابة ${durationMap[m.when]})` : "";
-    return `يعاني المريض من إصابة في ${m.place || "—"} منذ ${m.when || "—"}${phase}، ${op}، ومستوى الحركة الحالي: ${m.movement || "—"}.`;
-  }
-  if (p === "mobility") {
-    const phase = m.since ? ` (حالة ${durationMap[m.since]})` : "";
-    return `يعاني المريض من ${m.issueType || "—"} منذ ${m.since || "—"}${phase}، مستوى الحركة: ${m.movement || "—"}، الأدوات المساعدة: ${m.aid || "—"}.`;
-  }
-  if (p === "post_op") {
-    const phase = m.when ? ` (مرحلة ${durationMap[m.when]})` : "";
-    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}${phase}، ومستوى الحركة: ${m.movement || "—"}.`;
-  }
-  if (p === "speech") {
-    return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"} بدرجة ${m.severity || "—"}، مما يسبب ${m.impact || "—"}.`;
-  }
-  if (p === "nutrition") {
-    return `يسعى المريض إلى ${m.goal || "—"}، الأمراض المزمنة: ${m.chronic || "—"}، الالتزام الغذائي: ${m.adherence || "—"} منذ ${m.duration || "—"}.`;
-  }
-  return "";
+  if (!p) return null;
+  const qs = flow[p];
+  const items = qs
+    .filter((q) => d.medical[q.key])
+    .map((q) => ({ label: q.label, value: d.medical[q.key] }));
+  return { title: problemTitleMap[p], items };
 }
 
 export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
