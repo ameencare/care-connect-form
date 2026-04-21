@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
 const labels = ["البيانات الشخصية", "الخدمة المطلوبة", "الحالة الصحية", "التفضيلات وتأكيد الحجز"];
 
@@ -19,28 +20,35 @@ export function ProgressBar({ step, total }: { step: number; total: number }) {
         />
       </div>
       <div className="mt-3 flex justify-between gap-2">
-        {labels.map((label, i) => (
-          <div key={label} className="flex flex-1 flex-col items-center gap-1.5 text-center">
-            <div
-              className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all sm:h-9 sm:w-9",
-                i + 1 < step && "bg-gradient-brand text-white",
-                i + 1 === step && "bg-gradient-brand text-white ring-4 ring-primary/20",
-                i + 1 > step && "bg-secondary text-muted-foreground",
-              )}
-            >
-              {i + 1}
+        {labels.map((label, i) => {
+          const stepNum = i + 1;
+          const isCompleted = stepNum < step;
+          const isCurrent = stepNum === step;
+          return (
+            <div key={label} className="flex flex-1 flex-col items-center gap-1.5 text-center">
+              <div
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition-all sm:h-10 sm:w-10",
+                  isCompleted && "bg-primary text-white shadow-soft",
+                  isCurrent && "scale-110 bg-gradient-brand text-white shadow-soft ring-4 ring-primary/25",
+                  !isCompleted && !isCurrent && "bg-secondary text-muted-foreground",
+                )}
+              >
+                {isCompleted ? <Check className="h-5 w-5" strokeWidth={3} /> : stepNum}
+              </div>
+              <span
+                className={cn(
+                  "text-[10px] font-semibold leading-tight transition-colors sm:text-xs",
+                  isCurrent && "text-primary",
+                  isCompleted && "text-foreground",
+                  !isCompleted && !isCurrent && "text-muted-foreground",
+                )}
+              >
+                {label}
+              </span>
             </div>
-            <span
-              className={cn(
-                "text-[10px] font-semibold leading-tight sm:text-xs",
-                i + 1 === step ? "text-primary" : "text-muted-foreground",
-              )}
-            >
-              {label}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
