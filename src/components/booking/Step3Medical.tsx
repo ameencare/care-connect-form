@@ -386,6 +386,24 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
             />
           </div>
 
+          {recommendation && (
+            <div className="mt-4 rounded-2xl border-2 border-primary/40 bg-primary/5 p-4">
+              <div className="mb-1 flex items-center gap-2 text-sm font-bold text-primary">
+                <Sparkles className="h-4 w-4" />
+                التلميح: مستوى الخبرة المقترح
+              </div>
+              <div className="text-base font-bold text-foreground">
+                {recommendation.title}
+              </div>
+              <div className="mt-1 text-sm text-muted-foreground">
+                بناءً على: {recommendation.reason}.
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                يمكنك تعديل اختيارك في الخطوة التالية.
+              </div>
+            </div>
+          )}
+
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               type="button"
