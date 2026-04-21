@@ -3,6 +3,7 @@ import { OptionCard } from "./OptionCard";
 import { NPRSSlider, classifyNPRS } from "./NPRSSlider";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   AlertCircle,
   Bone,
@@ -105,35 +106,28 @@ const durationMap: Record<string, string> = {
   "أكثر من 3 أشهر": "مزمن",
 };
 
-function buildSummary(d: BookingData): string {
+interface SummaryData {
+  title: string;
+  items: { label: string; value: string }[];
+}
+
+const problemTitleMap: Record<ConditionId, string> = {
+  pain: "ألم",
+  fracture: "إصابة / كسر",
+  mobility: "ضعف أو صعوبة في الحركة",
+  post_op: "بعد عملية جراحية",
+  speech: "مشكلة في النطق أو البلع",
+  nutrition: "مشكلة غذائية",
+};
+
+function buildSummary(d: BookingData): SummaryData | null {
   const p = d.medical.problem as ConditionId | undefined;
-  const m = d.medical;
-  if (!p) return "";
-  if (p === "pain") {
-    const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "ألم";
-    const prior = m.priorPT === "نعم" ? "وسبق له العلاج الطبيعي لنفس المشكلة" : m.priorPT === "لا" ? "ولم يسبق له العلاج الطبيعي لهذه المشكلة" : "";
-    return `يعاني المريض من ${clinicalType} في ${m.place || "—"} منذ ${m.duration || "—"} ${prior}.`;
-  }
-  if (p === "fracture") {
-    const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
-    const phase = m.when ? ` (إصابة ${durationMap[m.when]})` : "";
-    return `يعاني المريض من إصابة في ${m.place || "—"} منذ ${m.when || "—"}${phase}، ${op}، ومستوى الحركة الحالي: ${m.movement || "—"}.`;
-  }
-  if (p === "mobility") {
-    const phase = m.since ? ` (حالة ${durationMap[m.since]})` : "";
-    return `يعاني المريض من ${m.issueType || "—"} منذ ${m.since || "—"}${phase}، مستوى الحركة: ${m.movement || "—"}، الأدوات المساعدة: ${m.aid || "—"}.`;
-  }
-  if (p === "post_op") {
-    const phase = m.when ? ` (مرحلة ${durationMap[m.when]})` : "";
-    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}${phase}، ومستوى الحركة: ${m.movement || "—"}.`;
-  }
-  if (p === "speech") {
-    return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"} بدرجة ${m.severity || "—"}، مما يسبب ${m.impact || "—"}.`;
-  }
-  if (p === "nutrition") {
-    return `يسعى المريض إلى ${m.goal || "—"}، الأمراض المزمنة: ${m.chronic || "—"}، الالتزام الغذائي: ${m.adherence || "—"} منذ ${m.duration || "—"}.`;
-  }
-  return "";
+  if (!p) return null;
+  const qs = flow[p];
+  const items = qs
+    .filter((q) => d.medical[q.key])
+    .map((q) => ({ label: q.label, value: d.medical[q.key] }));
+  return { title: problemTitleMap[p], items };
 }
 
 export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
@@ -263,11 +257,47 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
 
       {allAnswered && summary && (
         <div className="animate-in fade-in slide-in-from-bottom-2 rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-accent/40 to-card p-5 shadow-soft">
-          <div className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+          <div className="mb-3 flex items-center gap-2 text-sm font-bold text-primary">
             <CheckCircle2 className="h-5 w-5" />
             الملخص السريري
           </div>
-          <p className="text-base leading-relaxed text-foreground">{summary}</p>
+
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
+            <Stethoscope className="h-4 w-4" />
+            {summary.title}
+          </div>
+
+          <ul className="space-y-2">
+            {summary.items.map((it) => (
+              <li
+                key={it.label}
+                className="flex items-start gap-2 rounded-xl bg-card/60 px-3 py-2 text-sm"
+              >
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
+                  <span className="text-muted-foreground">{it.label}</span>
+                  <span className="font-semibold text-foreground">{it.value}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-4 space-y-2">
+            <Label htmlFor="medicalNote" className="text-sm font-semibold">
+              ملاحظات إضافية (اختياري)
+            </Label>
+            <Textarea
+              id="medicalNote"
+              value={data.medicalNote ?? ""}
+              onChange={(e) => {
+                update({ medicalNote: e.target.value });
+                setConfirmed(false);
+              }}
+              placeholder="اكتب أي تفاصيل إضافية من المريض أو المرافق هنا..."
+              className="min-h-[88px] rounded-xl bg-card"
+            />
+          </div>
+
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               type="button"
@@ -281,7 +311,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
               type="button"
               variant="outline"
               onClick={() => {
-                update({ medical: { problem: problem! } });
+                update({ medical: { problem: problem! }, medicalNote: "" });
                 setConfirmed(false);
               }}
             >
