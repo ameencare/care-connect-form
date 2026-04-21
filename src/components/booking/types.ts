@@ -8,6 +8,7 @@ export interface BookingData {
     fullName: string;
     age: string;
     nationalId: string;
+    phone: string;
   };
   companion: {
     name: string;
@@ -17,16 +18,16 @@ export interface BookingData {
   medical: Record<string, string>;
   attachmentName?: string;
   preferences: {
-    expertise: "mid" | "high" | "expert" | null;
+    gender: "male" | "female" | "any" | null;
     time: "morning" | "evening" | "flexible" | null;
   };
 }
 
 export const initialData: BookingData = {
   bookingFor: null,
-  patient: { fullName: "", age: "", nationalId: "" },
+  patient: { fullName: "", age: "", nationalId: "", phone: "" },
   companion: { name: "", phone: "" },
   service: null,
   medical: {},
-  preferences: { expertise: null, time: null },
+  preferences: { gender: null, time: null },
 };

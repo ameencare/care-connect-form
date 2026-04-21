@@ -1,5 +1,5 @@
 import { OptionCard } from "./OptionCard";
-import { Star, Award, Crown, Sun, Moon, Clock } from "lucide-react";
+import { User, UserRound, Users, Sun, Moon, Clock } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import type { BookingData } from "./types";
 
@@ -12,17 +12,17 @@ export function Step4Preferences({ data, update }: { data: BookingData; update: 
       </div>
 
       <div className="space-y-3">
-        <Label className="text-base font-semibold">التصنيف المفضل للأخصائيـ/ة</Label>
+        <Label className="text-base font-semibold">الجنس المفضل</Label>
         <div className="grid gap-3 sm:grid-cols-3">
-          <OptionCard compact selected={data.preferences.expertise === "mid"}
-            onClick={() => update({ preferences: { ...data.preferences, expertise: "mid" } })}
-            title="متوسط الخبرة" icon={<Star className="h-5 w-5" />} />
-          <OptionCard compact selected={data.preferences.expertise === "high"}
-            onClick={() => update({ preferences: { ...data.preferences, expertise: "high" } })}
-            title="عالي الخبرة" icon={<Award className="h-5 w-5" />} />
-          <OptionCard compact selected={data.preferences.expertise === "expert"}
-            onClick={() => update({ preferences: { ...data.preferences, expertise: "expert" } })}
-            title="خبير" icon={<Crown className="h-5 w-5" />} />
+          <OptionCard compact selected={data.preferences.gender === "male"}
+            onClick={() => update({ preferences: { ...data.preferences, gender: "male" } })}
+            title="ذكر" icon={<User className="h-5 w-5" />} />
+          <OptionCard compact selected={data.preferences.gender === "female"}
+            onClick={() => update({ preferences: { ...data.preferences, gender: "female" } })}
+            title="أنثى" icon={<UserRound className="h-5 w-5" />} />
+          <OptionCard compact selected={data.preferences.gender === "any"}
+            onClick={() => update({ preferences: { ...data.preferences, gender: "any" } })}
+            title="لا يهم" icon={<Users className="h-5 w-5" />} />
         </div>
       </div>
 
