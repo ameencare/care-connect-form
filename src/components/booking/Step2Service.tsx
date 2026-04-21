@@ -2,29 +2,39 @@ import { Activity, Hand, MessageCircle, Apple } from "lucide-react";
 import { OptionCard } from "./OptionCard";
 import type { BookingData, ServiceType } from "./types";
 
-const services: { id: ServiceType; title: string; desc: string; icon: React.ReactNode }[] = [
+const services: {
+  id: ServiceType;
+  title: string;
+  about: string;
+  price: string;
+  icon: React.ReactNode;
+}[] = [
   {
     id: "physio",
     title: "جلسة الفحص والعلاج الطبيعي المنزلي",
-    desc: "300 - 500 ريال حسب تصنيف الأخصائي/ة",
+    about: "تركز على تقييم المشاكل الحركية والآلام الجسدية.",
+    price: "300 - 500 ريال حسب تصنيف الأخصائي/ة",
     icon: <Activity className="h-6 w-6" />,
   },
   {
     id: "occupational",
     title: "جلسة الفحص والعلاج الوظيفي المنزلي",
-    desc: "300 - 500 ريال حسب تصنيف الأخصائي/ة",
+    about: "تركز على تقييم حركة اليدين والأطراف العلوية.",
+    price: "300 - 400 ريال حسب تصنيف الأخصائي/ة",
     icon: <Hand className="h-6 w-6" />,
   },
   {
     id: "speech",
     title: "جلسة الفحص وعلاج النطق والبلع المنزلي",
-    desc: "300 ريال",
+    about: "تركز على تقييم وتشخيص وتحسين القدرة على الكلام والتواصل والبلع بأمان.",
+    price: "300 ريال",
     icon: <MessageCircle className="h-6 w-6" />,
   },
   {
     id: "nutrition",
     title: "التغذية العلاجية",
-    desc: "199 ريال",
+    about: "تركز على تشخيص أولي للحالة لدعم الشفاء وتحسين صحة الجسم.",
+    price: "199 ريال",
     icon: <Apple className="h-6 w-6" />,
   },
 ];
