@@ -15,6 +15,7 @@ import {
   Edit3,
   CheckCircle2,
   Stethoscope,
+  Sparkles,
 } from "lucide-react";
 import type { BookingData, ServiceType } from "./types";
 
@@ -130,6 +131,92 @@ function buildSummary(d: BookingData): SummaryData | null {
   return { title: problemTitleMap[p], items };
 }
 
+type ExpertiseLevel = "junior" | "senior" | "expert";
+
+interface Recommendation {
+  level: ExpertiseLevel;
+  title: string;
+  reason: string;
+}
+
+const expertiseTitle: Record<ExpertiseLevel, string> = {
+  junior: "أخصائي متوسط الخبرة (Junior)",
+  senior: "أخصائي عالي الخبرة (Senior)",
+  expert: "أخصائي خبير (Expert)",
+};
+
+function recommendExpertise(d: BookingData): Recommendation | null {
+  const p = d.medical.problem as ConditionId | undefined;
+  if (!p) return null;
+  const m = d.medical;
+  const reasons: string[] = [];
+  let score = 0;
+
+  // Chronicity / duration
+  const durationKey = m.duration || m.when || m.since;
+  if (durationKey) {
+    const phase = durationMap[durationKey];
+    if (phase === "مزمن") {
+      score += 2;
+      reasons.push("الحالة مزمنة");
+    } else if (phase === "شبه حاد") {
+      score += 1;
+      reasons.push("الحالة شبه حادة");
+    }
+  }
+
+  // Mobility / severity
+  if (m.movement === "لا يستطيع الحركة" || m.movement === "لا يستطيع المشي") {
+    score += 2;
+    reasons.push("ضعف شديد في الحركة");
+  } else if (m.movement === "محدود" || m.movement === "بمساعدة") {
+    score += 1;
+    reasons.push("حركة محدودة");
+  }
+
+  if (m.severity === "شديدة") {
+    score += 2;
+    reasons.push("شدة عالية");
+  } else if (m.severity === "متوسطة") {
+    score += 1;
+    reasons.push("شدة متوسطة");
+  }
+
+  // Surgery / post-op
+  if (p === "post_op" || m.surgery === "نعم") {
+    score += 2;
+    reasons.push("حالة ما بعد عملية جراحية");
+  }
+
+  // Prior PT failed to resolve
+  if (m.priorPT === "نعم") {
+    score += 1;
+    reasons.push("سبق علاج طبيعي لنفس المشكلة");
+  }
+
+  // Aids
+  if (m.aid && m.aid !== "لا يوجد") {
+    score += 1;
+    reasons.push("يستخدم أداة مساعدة");
+  }
+
+  // Chronic comorbidities
+  if (m.chronic && m.chronic !== "لا يوجد") {
+    score += 1;
+    reasons.push(`وجود مرض مزمن (${m.chronic})`);
+  }
+
+  let level: ExpertiseLevel = "junior";
+  if (score >= 4) level = "expert";
+  else if (score >= 2) level = "senior";
+
+  const reason = reasons.length
+    ? reasons.join("، ")
+    : "حالة عامة تحتاج دعماً أولياً";
+
+  return { level, title: expertiseTitle[level], reason };
+}
+
 export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
   const service = data.service;
   const availableIds = service ? serviceToConditions[service] : [];
@@ -142,6 +229,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
   const attachmentOk = !requiresAttachment || !!data.attachmentName;
   const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]) && attachmentOk;
   const summary = useMemo(() => buildSummary(data), [data]);
+  const recommendation = useMemo(() => recommendExpertise(data), [data]);
   const [fileName, setFileName] = useState<string | undefined>(data.attachmentName);
 
   const setAnswer = (key: string, value: string) => {
@@ -297,6 +385,24 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
               className="min-h-[88px] rounded-xl bg-card"
             />
           </div>
+
+          {recommendation && (
+            <div className="mt-4 rounded-2xl border-2 border-primary/40 bg-primary/5 p-4">
+              <div className="mb-1 flex items-center gap-2 text-sm font-bold text-primary">
+                <Sparkles className="h-4 w-4" />
+                التلميح: مستوى الخبرة المقترح
+              </div>
+              <div className="text-base font-bold text-foreground">
+                {recommendation.title}
+              </div>
+              <div className="mt-1 text-sm text-muted-foreground">
+                بناءً على: {recommendation.reason}.
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                يمكنك تعديل اختيارك في الخطوة التالية.
+              </div>
+            </div>
+          )}
 
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
