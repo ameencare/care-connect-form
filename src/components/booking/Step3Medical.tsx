@@ -228,6 +228,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
   const attachmentOk = !requiresAttachment || !!data.attachmentName;
   const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]) && attachmentOk;
   const summary = useMemo(() => buildSummary(data), [data]);
+  const recommendation = useMemo(() => recommendExpertise(data), [data]);
   const [fileName, setFileName] = useState<string | undefined>(data.attachmentName);
 
   const setAnswer = (key: string, value: string) => {
