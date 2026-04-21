@@ -14,21 +14,26 @@ export function Step4Preferences({ data, update }: { data: BookingData; update: 
         <p className="mt-1 text-muted-foreground">اختر ما يناسبك</p>
       </div>
 
+      {recommendation && (
+        <div className="rounded-3xl border-2 border-primary bg-gradient-to-br from-accent/50 to-card p-6 shadow-soft">
+          <div className="mb-3 flex items-center gap-2 text-base font-bold text-primary">
+            <Sparkles className="h-6 w-6" />
+            مستوى الخبرة المقترح لحالتك
+          </div>
+          <div className="text-2xl font-extrabold text-foreground sm:text-3xl">
+            {recommendation.title}
+          </div>
+          <div className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            بناءً على: {recommendation.reason}.
+          </div>
+          <div className="mt-2 text-xs text-muted-foreground">
+            يمكنك اختيار مستوى مختلف من القائمة أدناه إذا رغبت بذلك.
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         <Label className="text-base font-semibold">مستوى خبرة الأخصائي</Label>
-
-        {recommendation && (
-          <div className="rounded-2xl border-2 border-primary/40 bg-primary/5 p-4">
-            <div className="mb-1 flex items-center gap-2 text-sm font-bold text-primary">
-              <Sparkles className="h-4 w-4" />
-              التلميح: مستوى الخبرة المقترح لحالتك
-            </div>
-            <div className="text-base font-bold text-foreground">{recommendation.title}</div>
-            <div className="mt-1 text-sm text-muted-foreground">
-              بناءً على: {recommendation.reason}.
-            </div>
-          </div>
-        )}
 
         <div className="grid gap-3">
           <OptionCard
