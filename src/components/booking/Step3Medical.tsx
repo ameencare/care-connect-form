@@ -132,6 +132,25 @@ function buildSummary(d: BookingData): SummaryData | null {
   return { title: problemTitleMap[p], items };
 }
 
+const SIDED_LOCATIONS = new Set(["الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "اليد", "الرجل"]);
+
+function expandQuestions(base: Question[], medical: Record<string, string>, problem: ConditionId): Question[] {
+  const result: Question[] = [];
+  for (const q of base) {
+    result.push(q);
+    if (q.key === "place" && (problem === "pain" || problem === "fracture")) {
+      const loc = medical.place;
+      if (loc && SIDED_LOCATIONS.has(loc)) {
+        result.push({ key: "side", label: "الجهة", options: ["اليمين", "اليسار", "كلاهما"] });
+      }
+    }
+    if (q.key === "surgery" && problem === "fracture" && medical.surgery === "لا") {
+      result.push({ key: "fractureHealed", label: "هل التئم الكسر؟", options: ["نعم", "لا"] });
+    }
+  }
+  return result;
+}
+
 export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
   const service = data.service;
   const availableIds = service ? serviceToConditions[service] : [];
@@ -139,7 +158,8 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
 
   const problem = data.medical.problem as ConditionId | undefined;
   const problemValid = problem && availableIds.includes(problem);
-  const questions = problemValid ? flow[problem!] : [];
+  const baseQuestions = problemValid ? flow[problem!] : [];
+  const questions = problemValid ? expandQuestions(baseQuestions, data.medical, problem!) : [];
   const requiresAttachment = problem === "fracture" || problem === "post_op";
   const attachmentOk = !requiresAttachment || !!data.attachmentName;
   const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]) && attachmentOk;
