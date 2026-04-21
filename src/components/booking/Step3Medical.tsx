@@ -15,6 +15,7 @@ import {
   Edit3,
   CheckCircle2,
   Stethoscope,
+  Sparkles,
 } from "lucide-react";
 import type { BookingData, ServiceType } from "./types";
 
