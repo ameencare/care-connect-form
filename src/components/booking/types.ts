@@ -16,6 +16,7 @@ export interface BookingData {
   };
   service: ServiceType;
   medical: Record<string, string>;
+  medicalNote?: string;
   attachmentName?: string;
   preferences: {
     gender: "male" | "female" | "any" | null;
