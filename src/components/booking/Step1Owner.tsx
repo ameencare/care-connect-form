@@ -15,7 +15,7 @@ export function Step1Owner({ data, update }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground">بيانات الحجز</h2>
+        <h2 className="text-2xl font-bold text-foreground">البيانات الشخصية</h2>
         <p className="mt-1 text-muted-foreground">الحجز لمن؟</p>
       </div>
 
