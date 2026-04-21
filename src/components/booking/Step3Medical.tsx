@@ -114,11 +114,7 @@ function buildSummary(d: BookingData): string {
   }
   if (p === "post_op") {
     const phase = m.when ? ` (مرحلة ${durationMap[m.when]})` : "";
-    const severityText =
-      m.severity !== undefined && m.severity !== ""
-        ? `بدرجة ${m.severity} من 10 (${classifyNPRS(Number(m.severity)).label})`
-        : "بدرجة —";
-    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}${phase}، مستوى الألم ${severityText}، ومستوى الحركة: ${m.movement || "—"}.`;
+    return `المريض في مرحلة ما بعد عملية ${m.surgeryType || "—"} التي تمت منذ ${m.when || "—"}${phase}، ومستوى الحركة: ${m.movement || "—"}.`;
   }
   if (p === "speech") {
     return `يعاني المريض من ${m.mainIssue || "—"} منذ ${m.since || "—"} بدرجة ${m.severity || "—"}، مما يسبب ${m.impact || "—"}.`;
