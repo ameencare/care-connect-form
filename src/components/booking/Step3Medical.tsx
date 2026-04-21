@@ -311,10 +311,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                update({ medical: { problem: problem! }, medicalNote: "" });
-                setConfirmed(false);
-              }}
+              onClick={() => setConfirmed(false)}
             >
               <Edit3 className="ml-2 h-4 w-4" />
               تعديل الإجابات
