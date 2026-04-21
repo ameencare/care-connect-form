@@ -51,16 +51,10 @@ const serviceToConditions: Record<NonNullable<ServiceType>, ConditionId[]> = {
 
 const flow: Record<ConditionId, Question[]> = {
   pain: [
-    { section: "خصائص العَرَض", key: "painType", label: "نوع الألم", options: ["حاد", "نابض", "حارق", "شد عضلي", "تنميل"] },
-    { key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
+    { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
     { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { key: "severity", label: "كم شدة الألم لديك الآن؟", options: [], section: undefined },
-    { section: "سلوك الأعراض", key: "aggravating", label: "متى يزيد الألم؟", options: ["عند الحركة", "عند الجلوس", "عند الوقوف", "مستمر"] },
-    { key: "rest", label: "هل يتحسن مع الراحة؟", options: ["نعم", "لا"] },
     { section: "التأثير الوظيفي", key: "impact", label: "هل يؤثر على الأنشطة اليومية؟", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
-    { key: "limitation", label: "ما الذي لا يستطيع المريض القيام به؟", options: ["المشي", "الجلوس لفترة طويلة", "صعود الدرج", "استخدام اليد"] },
-    { section: "السياق الطبي", key: "diagnosed", label: "هل تم تشخيص الحالة من قبل طبيب؟", options: ["نعم", "لا"] },
-    { key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
+    { section: "السياق الطبي", key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
   ],
   fracture: [
     { key: "place", label: "مكان الإصابة", options: ["اليد", "الرجل", "الظهر", "الكتف", "أخرى"] },
@@ -106,15 +100,9 @@ function buildSummary(d: BookingData): string {
   const m = d.medical;
   if (!p) return "";
   if (p === "pain") {
-    const rest = m.rest === "نعم" ? "ويتحسن مع الراحة" : m.rest === "لا" ? "ولا يتحسن مع الراحة" : "";
-    const diag = m.diagnosed === "نعم" ? "تم تشخيص الحالة طبياً" : "لم يتم التشخيص الطبي بعد";
-    const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "";
-    const painDescriptor = clinicalType ? `${clinicalType} (${m.painType || "—"})` : `ألم ${m.painType || "—"}`;
-    const severityText =
-      m.severity !== undefined && m.severity !== ""
-        ? `بدرجة ${m.severity} من 10 (${classifyNPRS(Number(m.severity)).label})`
-        : "بدرجة —";
-    return `يعاني المريض من ${painDescriptor} في ${m.place || "—"} منذ ${m.duration || "—"} ${severityText}، يزداد ${m.aggravating || "—"} ${rest}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ويصعب عليه ${m.limitation || "—"}. ${diag}.`;
+    const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "ألم";
+    const prior = m.priorPT === "نعم" ? "وسبق له العلاج الطبيعي لنفس المشكلة" : m.priorPT === "لا" ? "ولم يسبق له العلاج الطبيعي لهذه المشكلة" : "";
+    return `يعاني المريض من ${clinicalType} في ${m.place || "—"} منذ ${m.duration || "—"}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ${prior}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
