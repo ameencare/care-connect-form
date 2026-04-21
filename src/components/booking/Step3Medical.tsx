@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { BookingData, ServiceType } from "./types";
+import { recommendExpertise } from "./recommendExpertise";
 
 interface Props {
   data: BookingData;
