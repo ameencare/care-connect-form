@@ -125,7 +125,7 @@ const problemTitleMap: Record<ConditionId, string> = {
 function buildSummary(d: BookingData): SummaryData | null {
   const p = d.medical.problem as ConditionId | undefined;
   if (!p) return null;
-  const qs = flow[p];
+  const qs = expandQuestions(flow[p], d.medical, p);
   const items = qs
     .filter((q) => d.medical[q.key])
     .map((q) => ({ label: q.label, value: d.medical[q.key] }));
