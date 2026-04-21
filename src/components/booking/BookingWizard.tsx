@@ -21,12 +21,13 @@ export function BookingWizard() {
     if (step === 1) {
       if (!data.bookingFor) return false;
       if (!data.patient.fullName || !data.patient.age || !data.patient.nationalId) return false;
+      if (data.bookingFor === "self" && !data.patient.phone) return false;
       if (data.bookingFor === "companion" && (!data.companion.name || !data.companion.phone)) return false;
       return true;
     }
     if (step === 2) return !!data.service;
     if (step === 3) return confirmed;
-    if (step === 4) return !!data.preferences.expertise && !!data.preferences.time;
+    if (step === 4) return !!data.preferences.gender && !!data.preferences.time;
     return false;
   })();
 
