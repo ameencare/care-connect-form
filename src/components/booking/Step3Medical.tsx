@@ -74,8 +74,9 @@ const flow: Record<ConditionId, Question[]> = {
   mobility: [
     { key: "issueType", label: "نوع المشكلة", options: ["ضعف عضلي", "مشكلة توازن", "صعوبة في المشي"] },
     { key: "since", label: "مدة الحالة", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "بمساعدة", "لا يستطيع المشي"] },
+    { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "بمساعدة", "لا يستطيع الحركة"] },
     { key: "aid", label: "استخدام أدوات مساعدة", options: ["كرسي متحرك", "عكاز", "مشاية", "لا يوجد"] },
+    { key: "fallHistory", label: "هل سبق وتعرضت للسقوط؟", options: ["نعم", "لا"] },
     chronicQuestion,
   ],
   post_op: [
