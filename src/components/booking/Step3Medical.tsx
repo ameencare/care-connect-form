@@ -257,11 +257,47 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
 
       {allAnswered && summary && (
         <div className="animate-in fade-in slide-in-from-bottom-2 rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-accent/40 to-card p-5 shadow-soft">
-          <div className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
+          <div className="mb-3 flex items-center gap-2 text-sm font-bold text-primary">
             <CheckCircle2 className="h-5 w-5" />
             الملخص السريري
           </div>
-          <p className="text-base leading-relaxed text-foreground">{summary}</p>
+
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
+            <Stethoscope className="h-4 w-4" />
+            {summary.title}
+          </div>
+
+          <ul className="space-y-2">
+            {summary.items.map((it) => (
+              <li
+                key={it.label}
+                className="flex items-start gap-2 rounded-xl bg-card/60 px-3 py-2 text-sm"
+              >
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
+                  <span className="text-muted-foreground">{it.label}</span>
+                  <span className="font-semibold text-foreground">{it.value}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-4 space-y-2">
+            <Label htmlFor="medicalNote" className="text-sm font-semibold">
+              ملاحظات إضافية (اختياري)
+            </Label>
+            <Textarea
+              id="medicalNote"
+              value={data.medicalNote ?? ""}
+              onChange={(e) => {
+                update({ medicalNote: e.target.value });
+                setConfirmed(false);
+              }}
+              placeholder="اكتب أي تفاصيل إضافية من المريض أو المرافق هنا..."
+              className="min-h-[88px] rounded-xl bg-card"
+            />
+          </div>
+
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               type="button"
@@ -275,7 +311,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
               type="button"
               variant="outline"
               onClick={() => {
-                update({ medical: { problem: problem! } });
+                update({ medical: { problem: problem! }, medicalNote: "" });
                 setConfirmed(false);
               }}
             >
