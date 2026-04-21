@@ -10,45 +10,80 @@ interface Props {
 }
 
 export function Step1Owner({ data, update }: Props) {
+  const isSelf = data.bookingFor === "self";
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-foreground">بيانات الحجز</h2>
-        <p className="mt-1 text-muted-foreground">من سيتم الحجز له؟</p>
+        <p className="mt-1 text-muted-foreground">الحجز لمن؟</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <OptionCard
           selected={data.bookingFor === "self"}
           onClick={() => update({ bookingFor: "self" })}
-          title="المريض نفسه"
+          title="لنفسي"
           icon={<User className="h-6 w-6" />}
         />
         <OptionCard
           selected={data.bookingFor === "companion"}
           onClick={() => update({ bookingFor: "companion" })}
-          title="مرافق للمريض"
+          title="لشخص آخر"
           icon={<Users className="h-6 w-6" />}
         />
       </div>
 
       {data.bookingFor && (
         <div className="animate-in fade-in slide-in-from-bottom-2 space-y-4 rounded-2xl border border-border bg-card p-5 shadow-card">
-          <Field label="الاسم الكامل للمريض" value={data.patient.fullName}
-            onChange={(v) => update({ patient: { ...data.patient, fullName: v } })} />
+          <h3 className="text-lg font-bold text-foreground">
+            {isSelf ? "بياناتك" : "بيانات المريض"}
+          </h3>
+
+          <Field
+            label={isSelf ? "الاسم الكامل" : "اسم المريض"}
+            value={data.patient.fullName}
+            onChange={(v) => update({ patient: { ...data.patient, fullName: v } })}
+          />
           <div className="grid grid-cols-2 gap-3">
-            <Field label="العمر" type="number" value={data.patient.age}
-              onChange={(v) => update({ patient: { ...data.patient, age: v } })} />
-            <Field label="رقم الهوية" value={data.patient.nationalId}
-              onChange={(v) => update({ patient: { ...data.patient, nationalId: v } })} />
+            <Field
+              label={isSelf ? "العمر" : "عمر المريض"}
+              type="number"
+              value={data.patient.age}
+              onChange={(v) => update({ patient: { ...data.patient, age: v } })}
+            />
+            <Field
+              label="رقم الهوية"
+              value={data.patient.nationalId}
+              onChange={(v) => update({ patient: { ...data.patient, nationalId: v } })}
+            />
           </div>
 
+          {isSelf && (
+            <Field
+              label="رقم الجوال"
+              type="tel"
+              value={data.patient.phone}
+              onChange={(v) => update({ patient: { ...data.patient, phone: v } })}
+            />
+          )}
+
           {data.bookingFor === "companion" && (
-            <div className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
-              <Field label="اسم المرافق" value={data.companion.name}
-                onChange={(v) => update({ companion: { ...data.companion, name: v } })} />
-              <Field label="رقم جوال المرافق" type="tel" value={data.companion.phone}
-                onChange={(v) => update({ companion: { ...data.companion, phone: v } })} />
+            <div className="space-y-4 border-t border-border pt-4">
+              <h3 className="text-lg font-bold text-foreground">مرافق المريض</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field
+                  label="اسم المرافق"
+                  value={data.companion.name}
+                  onChange={(v) => update({ companion: { ...data.companion, name: v } })}
+                />
+                <Field
+                  label="رقم جوال المرافق"
+                  type="tel"
+                  value={data.companion.phone}
+                  onChange={(v) => update({ companion: { ...data.companion, phone: v } })}
+                />
+              </div>
             </div>
           )}
         </div>
