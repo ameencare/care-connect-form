@@ -6,7 +6,7 @@ interface Props {
   selected: boolean;
   onClick: () => void;
   title: string;
-  description?: string;
+  description?: ReactNode;
   icon?: ReactNode;
   compact?: boolean;
 }
