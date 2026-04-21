@@ -15,10 +15,8 @@ import {
   Edit3,
   CheckCircle2,
   Stethoscope,
-  Sparkles,
 } from "lucide-react";
 import type { BookingData, ServiceType } from "./types";
-import { recommendExpertise } from "./recommendExpertise";
 
 interface Props {
   data: BookingData;
@@ -144,7 +142,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
   const attachmentOk = !requiresAttachment || !!data.attachmentName;
   const allAnswered = questions.length > 0 && questions.every((q) => data.medical[q.key]) && attachmentOk;
   const summary = useMemo(() => buildSummary(data), [data]);
-  const recommendation = useMemo(() => recommendExpertise(data), [data]);
+  
   const [fileName, setFileName] = useState<string | undefined>(data.attachmentName);
 
   const setAnswer = (key: string, value: string) => {
@@ -300,25 +298,6 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
               className="min-h-[88px] rounded-xl bg-card"
             />
           </div>
-
-          {recommendation && (
-            <div className="mt-4 rounded-2xl border-2 border-primary/40 bg-primary/5 p-4">
-              <div className="mb-1 flex items-center gap-2 text-sm font-bold text-primary">
-                <Sparkles className="h-4 w-4" />
-                التلميح: مستوى الخبرة المقترح
-              </div>
-              <div className="text-base font-bold text-foreground">
-                {recommendation.title}
-              </div>
-              <div className="mt-1 text-sm text-muted-foreground">
-                بناءً على: {recommendation.reason}.
-              </div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                يمكنك تعديل اختيارك في الخطوة التالية.
-              </div>
-            </div>
-          )}
-
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               type="button"
