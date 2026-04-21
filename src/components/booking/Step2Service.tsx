@@ -20,7 +20,7 @@ const services: {
     id: "occupational",
     title: "جلسة الفحص والعلاج الوظيفي المنزلي",
     about: "تركز على تقييم حركة اليدين والأطراف العلوية.",
-    price: "300 - 400 ريال حسب تصنيف الأخصائي/ة",
+    price: "300 - 400 ريال حسب تصنيف الاخصائي",
     icon: <Hand className="h-6 w-6" />,
   },
   {
@@ -45,7 +45,7 @@ export function Step2Service({ data, update }: { data: BookingData; update: (d: 
       <div>
         <h2 className="text-2xl font-bold text-foreground">اختر الخدمة</h2>
         <p className="mt-1 text-muted-foreground">
-          تبدأ خدماتنا بجلسة فحص وعلاج يقوم خلالها الأخصائي بزيارة المريض في منزله لإجراء تقييم شامل للحالة.
+          تبدأ خدماتنا بجلسة فحص وعلاج يقوم خلالها الاخصائي بزيارة المريض في منزله لإجراء تقييم شامل للحالة.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
