@@ -60,7 +60,6 @@ const flow: Record<ConditionId, Question[]> = {
   pain: [
     { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "أخرى"] },
     { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
-    { section: "التأثير الوظيفي", key: "impact", label: "هل يؤثر على الأنشطة اليومية؟", options: ["لا يؤثر", "يؤثر بشكل بسيط", "يؤثر بشكل كبير"] },
     { section: "السياق الطبي", key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
     chronicQuestion,
   ],
@@ -113,7 +112,7 @@ function buildSummary(d: BookingData): string {
   if (p === "pain") {
     const clinicalType = m.duration ? `ألم ${durationMap[m.duration]}` : "ألم";
     const prior = m.priorPT === "نعم" ? "وسبق له العلاج الطبيعي لنفس المشكلة" : m.priorPT === "لا" ? "ولم يسبق له العلاج الطبيعي لهذه المشكلة" : "";
-    return `يعاني المريض من ${clinicalType} في ${m.place || "—"} منذ ${m.duration || "—"}، مما يؤثر على الأنشطة اليومية (${m.impact || "—"}) ${prior}.`;
+    return `يعاني المريض من ${clinicalType} في ${m.place || "—"} منذ ${m.duration || "—"} ${prior}.`;
   }
   if (p === "fracture") {
     const op = m.surgery === "نعم" ? "وقد أجرى عملية جراحية" : "ولم يخضع لعملية جراحية";
