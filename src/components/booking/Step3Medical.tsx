@@ -227,6 +227,37 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
                   value={data.medical[q.key]}
                   onChange={(v) => setAnswer(q.key, v)}
                 />
+              ) : q.key === "chronic" ? (
+                <div className="flex flex-wrap gap-2">
+                  {q.options.map((opt) => {
+                    const current = (data.medical[q.key] || "").split("،").map((s) => s.trim()).filter(Boolean);
+                    const active = current.includes(opt);
+                    const isNone = opt === "لا يوجد";
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => {
+                          let next: string[];
+                          if (isNone) {
+                            next = active ? [] : ["لا يوجد"];
+                          } else {
+                            const without = current.filter((v) => v !== "لا يوجد");
+                            next = active ? without.filter((v) => v !== opt) : [...without, opt];
+                          }
+                          setAnswer(q.key, next.join("، "));
+                        }}
+                        className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
+                          active
+                            ? "border-primary bg-gradient-brand text-white shadow-soft"
+                            : "border-border bg-card text-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {q.options.map((opt) => {
