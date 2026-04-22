@@ -59,13 +59,13 @@ const chronicQuestion: Question = {
 
 const flow: Record<ConditionId, Question[]> = {
   pain: [
-    { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "أخرى"] },
+    { section: "خصائص العَرَض", key: "place", label: "مكان الألم", options: ["الظهر", "الرقبة", "الكتف", "الذراع", "الكوع", "اليد", "الورك", "الفخذ", "الركبة", "الكاحل", "القدم", "أخرى"] },
     { key: "duration", label: "منذ متى تعاني من الألم؟", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { section: "السياق الطبي", key: "priorPT", label: "هل سبق لك العلاج الطبيعي لنفس المشكلة؟", options: ["نعم", "لا"] },
     chronicQuestion,
   ],
   fracture: [
-    { key: "place", label: "مكان الإصابة", options: ["اليد", "الرجل", "الظهر", "الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "أخرى"] },
+    { key: "place", label: "مكان الإصابة", options: ["الظهر", "الرقبة", "الكتف", "الذراع", "الكوع", "اليد", "الورك", "الفخذ", "الرجل", "الركبة", "الكاحل", "القدم", "أخرى"] },
     { key: "when", label: "وقت الإصابة", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
     { key: "surgery", label: "هل تم إجراء عملية تثبيت للكسر؟", options: ["نعم", "لا"] },
     { key: "movement", label: "مستوى الحركة الحالي", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
@@ -132,7 +132,7 @@ function buildSummary(d: BookingData): SummaryData | null {
   return { title: problemTitleMap[p], items };
 }
 
-const SIDED_LOCATIONS = new Set(["الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "اليد", "الرجل"]);
+const SIDED_LOCATIONS = new Set(["الكتف", "الذراع", "الكوع", "اليد", "الورك", "الفخذ", "الركبة", "الكاحل", "القدم", "الرجل"]);
 
 function expandQuestions(base: Question[], medical: Record<string, string>, problem: ConditionId): Question[] {
   const result: Question[] = [];
@@ -142,6 +142,9 @@ function expandQuestions(base: Question[], medical: Record<string, string>, prob
       const loc = medical.place;
       if (loc && SIDED_LOCATIONS.has(loc)) {
         result.push({ key: "side", label: "الجهة", options: ["اليمين", "اليسار", "كلاهما"] });
+        if (medical.side === "كلاهما") {
+          result.push({ key: "worseSide", label: "أيهما أشد؟", options: ["اليمين", "اليسار"] });
+        }
       }
     }
     if (q.key === "surgery" && problem === "fracture" && medical.surgery === "لا") {
