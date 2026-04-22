@@ -39,21 +39,21 @@ export function Step4Preferences({ data, update }: { data: BookingData; update: 
           <OptionCard
             selected={data.preferences.expertise === "junior"}
             onClick={() => update({ preferences: { ...data.preferences, expertise: "junior" } })}
-            title={`اخصائي متوسط الخبرة${recommendation?.level === "junior" ? " — مقترح" : ""}`}
+            title="اخصائي متوسط الخبرة"
             description="خبرة من 1 إلى 3 سنوات، مناسب للحالات العامة التي تحتاج دعماً أولياً."
             icon={<GraduationCap className="h-5 w-5" />}
           />
           <OptionCard
             selected={data.preferences.expertise === "senior"}
             onClick={() => update({ preferences: { ...data.preferences, expertise: "senior" } })}
-            title={`اخصائي عالي الخبرة${recommendation?.level === "senior" ? " — مقترح" : ""}`}
+            title="اخصائي عالي الخبرة"
             description="خبرة من 4 إلى 9 سنوات، مناسب للحالات المتقدمة التي تتطلب خبرة أعمق."
             icon={<Award className="h-5 w-5" />}
           />
           <OptionCard
             selected={data.preferences.expertise === "expert"}
             onClick={() => update({ preferences: { ...data.preferences, expertise: "expert" } })}
-            title={`اخصائي خبير${recommendation?.level === "expert" ? " — مقترح" : ""}`}
+            title="اخصائي خبير"
             description="خبرة فوق 10 سنوات، الخيار الأنسب للحالات المعقدة."
             icon={<Star className="h-5 w-5" />}
           />
