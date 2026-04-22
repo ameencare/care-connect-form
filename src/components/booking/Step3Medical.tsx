@@ -290,14 +290,15 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
             {summary.title}
           </div>
 
-          <ul className="list-disc space-y-2 pr-5 marker:text-primary">
-            {summary.items.map((it) => (
-              <li key={it.label} className="text-sm leading-relaxed">
+          <p className="text-sm leading-relaxed text-foreground">
+            {summary.items.map((it, i) => (
+              <span key={it.label}>
                 <span className="text-muted-foreground">{it.label}:</span>{" "}
-                <span className="font-semibold text-foreground">{it.value}</span>
-              </li>
+                <span className="font-semibold">{it.value}</span>
+                {i < summary.items.length - 1 ? "، " : "."}
+              </span>
             ))}
-          </ul>
+          </p>
 
           <div className="mt-4 space-y-2">
             <Label htmlFor="medicalNote" className="text-sm font-semibold">
