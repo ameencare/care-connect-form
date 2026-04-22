@@ -386,13 +386,7 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
           </div>
 
           <p className="text-sm leading-relaxed text-foreground">
-            {summary.items.map((it, i) => (
-              <span key={it.label}>
-                <span className="text-muted-foreground">{it.label}:</span>{" "}
-                <span className="font-semibold">{it.value}</span>
-                {i < summary.items.length - 1 ? "، " : "."}
-              </span>
-            ))}
+            {summary.sentence}
           </p>
 
           <div className="mt-4 space-y-2">
