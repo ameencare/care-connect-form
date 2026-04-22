@@ -132,7 +132,7 @@ function buildSummary(d: BookingData): SummaryData | null {
   return { title: problemTitleMap[p], items };
 }
 
-const SIDED_LOCATIONS = new Set(["الكتف", "الركبة", "الكاحل", "القدم", "الفخذ", "الورك", "اليد", "الرجل"]);
+const SIDED_LOCATIONS = new Set(["الكتف", "الذراع", "الكوع", "اليد", "الورك", "الفخذ", "الركبة", "الكاحل", "القدم", "الرجل"]);
 
 function expandQuestions(base: Question[], medical: Record<string, string>, problem: ConditionId): Question[] {
   const result: Question[] = [];
@@ -142,6 +142,9 @@ function expandQuestions(base: Question[], medical: Record<string, string>, prob
       const loc = medical.place;
       if (loc && SIDED_LOCATIONS.has(loc)) {
         result.push({ key: "side", label: "الجهة", options: ["اليمين", "اليسار", "كلاهما"] });
+        if (medical.side === "كلاهما") {
+          result.push({ key: "worseSide", label: "أيهما أشد؟", options: ["اليمين", "اليسار"] });
+        }
       }
     }
     if (q.key === "surgery" && problem === "fracture" && medical.surgery === "لا") {
