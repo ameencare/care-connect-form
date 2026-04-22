@@ -111,7 +111,7 @@ const durationMap: Record<string, string> = {
 
 interface SummaryData {
   title: string;
-  items: { label: string; value: string }[];
+  sentence: string;
 }
 
 const problemTitleMap: Record<ConditionId, string> = {
@@ -126,11 +126,68 @@ const problemTitleMap: Record<ConditionId, string> = {
 function buildSummary(d: BookingData): SummaryData | null {
   const p = d.medical.problem as ConditionId | undefined;
   if (!p) return null;
-  const qs = expandQuestions(flow[p], d.medical, p);
-  const items = qs
-    .filter((q) => d.medical[q.key])
-    .map((q) => ({ label: q.label, value: d.medical[q.key] }));
-  return { title: problemTitleMap[p], items };
+  const m = d.medical;
+  const parts: string[] = [];
+
+  const sideText = () => {
+    if (!m.side) return "";
+    if (m.side === "كلاهما") {
+      return m.worseSide ? ` (كلا الجهتين، الأشد: ${m.worseSide})` : " (كلا الجهتين)";
+    }
+    return ` (${m.side})`;
+  };
+
+  if (p === "pain") {
+    if (m.place) parts.push(`يعاني من ألم في ${m.place}${sideText()}`);
+    else parts.push("يعاني من ألم");
+    if (m.duration) parts.push(`منذ ${m.duration}`);
+    if (m.severity) parts.push(`بشدة ${m.severity} (${classifyNPRS(Number(m.severity))})`);
+    if (m.priorPT) parts.push(`سبق له العلاج الطبيعي لنفس المشكلة: ${m.priorPT}`);
+  } else if (p === "fracture") {
+    if (m.place) parts.push(`يعاني من إصابة/كسر في ${m.place}${sideText()}`);
+    else parts.push("يعاني من إصابة/كسر");
+    if (m.when) parts.push(`منذ ${m.when}`);
+    if (m.surgery) parts.push(`عملية تثبيت: ${m.surgery}`);
+    if (m.fractureHealed) parts.push(`التئام الكسر: ${m.fractureHealed}`);
+    if (m.movement) parts.push(`ومستوى الحركة ${m.movement}`);
+  } else if (p === "mobility") {
+    const issue = m.issueType ? `يعاني من ${m.issueType}` : "يعاني من ضعف أو صعوبة في الحركة";
+    parts.push(issue);
+    if (m.cause) parts.push(`بسبب ${m.cause}`);
+    if (m.since) parts.push(`منذ ${m.since}`);
+    if (m.movement) parts.push(`ومستوى الحركة ${m.movement}`);
+    if (m.aid && m.aid !== "لا يوجد") parts.push(`يستخدم ${m.aid}`);
+    if (m.fallHistory === "نعم") {
+      parts.push(
+        m.fallDoctorVisit === "نعم"
+          ? "سبق وتعرض للسقوط وراجع الطبيب"
+          : "سبق وتعرض للسقوط ولم يراجع الطبيب",
+      );
+    }
+  } else if (p === "post_op") {
+    if (m.surgeryType) parts.push(`بعد عملية في ${m.surgeryType}`);
+    else parts.push("بعد عملية جراحية");
+    if (m.when) parts.push(`أُجريت ${m.when}`);
+    if (m.doctorRecommendation) parts.push(`توصية الطبيب ببدء العلاج الطبيعي: ${m.doctorRecommendation}`);
+    if (m.movement) parts.push(`ومستوى الحركة ${m.movement}`);
+  } else if (p === "speech") {
+    if (m.mainIssue) parts.push(`يعاني من ${m.mainIssue}`);
+    if (m.since) parts.push(`منذ ${m.since}`);
+    if (m.severity) parts.push(`بشدة ${m.severity}`);
+    if (m.impact) parts.push(`التأثير: ${m.impact}`);
+  } else if (p === "nutrition") {
+    if (m.goal) parts.push(`الهدف ${m.goal}`);
+    if (m.duration) parts.push(`منذ ${m.duration}`);
+    if (m.adherence) parts.push(`الالتزام الغذائي ${m.adherence}`);
+  }
+
+  if (m.chronic) {
+    if (m.chronic === "لا يوجد") parts.push("لا يوجد أمراض مزمنة");
+    else parts.push(`ولديه ${m.chronic}`);
+  }
+
+  const sentence = parts.join("، ").replace(/،\s*و/g, " و") + ".";
+  return { title: problemTitleMap[p], sentence };
 }
 
 const SIDED_LOCATIONS = new Set(["الكتف", "الذراع", "الكوع", "اليد", "الورك", "الفخذ", "الركبة", "الكاحل", "القدم", "الرجل"]);
