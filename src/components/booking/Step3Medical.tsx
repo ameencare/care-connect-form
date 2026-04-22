@@ -208,6 +208,13 @@ function expandQuestions(base: Question[], medical: Record<string, string>, prob
     if (q.key === "surgery" && problem === "fracture" && medical.surgery === "لا") {
       result.push({ key: "fractureHealed", label: "هل التئم الكسر؟", options: ["نعم", "لا"] });
     }
+    if (q.key === "surgery" && problem === "fracture" && medical.surgery === "نعم") {
+      result.push({
+        key: "surgeryWhen",
+        label: "متى تمت العملية؟",
+        options: ["حديثًا (أقل من أسبوعين)", "قبل 3 شهور", "قبل 6 أشهر حتى سنة"],
+      });
+    }
     if (q.key === "fallHistory" && problem === "mobility" && medical.fallHistory === "نعم") {
       result.push({ key: "fallDoctorVisit", label: "هل راجعت الطبيب؟", options: ["نعم", "لا"] });
     }
