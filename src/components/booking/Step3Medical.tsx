@@ -323,24 +323,37 @@ export function Step3Medical({ data, update, confirmed, setConfirmed }: Props) {
                   })}
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2">
-                  {q.options.map((opt) => {
-                    const active = data.medical[q.key] === opt;
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setAnswer(q.key, opt)}
-                        className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
-                          active
-                            ? "border-primary bg-gradient-brand text-white shadow-soft"
-                            : "border-border bg-card text-foreground hover:border-primary/50"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    );
-                  })}
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    {q.options.map((opt) => {
+                      const active = data.medical[q.key] === opt;
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => setAnswer(q.key, opt)}
+                          className={`rounded-full border-2 px-5 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
+                            active
+                              ? "border-primary bg-gradient-brand text-white shadow-soft"
+                              : "border-border bg-card text-foreground hover:border-primary/50"
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {q.options.includes("أخرى") && data.medical[q.key] === "أخرى" && (
+                    <Textarea
+                      value={data.medical[`${q.key}_other`] ?? ""}
+                      onChange={(e) => {
+                        update({ medical: { ...data.medical, [`${q.key}_other`]: e.target.value } });
+                        setConfirmed(false);
+                      }}
+                      placeholder="يرجى التوضيح..."
+                      className="min-h-[64px] rounded-xl bg-card"
+                    />
+                  )}
                 </div>
               )}
             </div>
