@@ -81,7 +81,7 @@ const flow: Record<ConditionId, Question[]> = {
     chronicQuestion,
   ],
   post_op: [
-    { key: "surgeryType", label: "نوع العملية", options: ["الظهر", "الرقبة", "الكتف", "الذراع", "الكوع", "اليد", "الورك", "الفخذ", "الركبة", "الكاحل", "القدم", "أخرى"] },
+    { key: "surgeryType", label: "نوع العملية", options: ["تبديل مفصل الركبة", "خياطة الغضروف الهلالي", "الرباط الصليبي الأمامي", "قسطرة قلبية", "أخرى"] },
     { key: "when", label: "متى تمت العملية؟", options: ["أقل من أسبوعين", "من أسبوعين إلى 6 أشهر", "أكثر من 6 أشهر"] },
     { key: "doctorRecommendation", label: "هل وصى الطبيب ببدء العلاج الطبيعي؟", options: ["نعم", "لا"] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
@@ -217,6 +217,9 @@ function expandQuestions(base: Question[], medical: Record<string, string>, prob
     }
     if (q.key === "fallHistory" && problem === "mobility" && medical.fallHistory === "نعم") {
       result.push({ key: "fallDoctorVisit", label: "هل راجعت الطبيب؟", options: ["نعم", "لا"] });
+    }
+    if (q.key === "surgeryType" && problem === "post_op" && medical.surgeryType === "تبديل مفصل الركبة") {
+      result.push({ key: "side", label: "الجهة", options: ["اليمين", "اليسار", "كلاهما"] });
     }
   }
   return result;
