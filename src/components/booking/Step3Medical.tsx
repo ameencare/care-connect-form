@@ -81,7 +81,7 @@ const flow: Record<ConditionId, Question[]> = {
     chronicQuestion,
   ],
   post_op: [
-    { key: "surgeryType", label: "نوع العملية", options: ["ركبة", "ورك", "ظهر", "كتف", "أخرى"] },
+    { key: "surgeryType", label: "نوع العملية", options: ["الظهر", "الرقبة", "الكتف", "الذراع", "الكوع", "اليد", "الورك", "الفخذ", "الركبة", "الكاحل", "القدم", "أخرى"] },
     { key: "when", label: "متى تمت العملية؟", options: ["أقل من أسبوعين", "من أسبوعين إلى 6 أشهر", "أكثر من 6 أشهر"] },
     { key: "doctorRecommendation", label: "هل وصى الطبيب ببدء العلاج الطبيعي؟", options: ["نعم", "لا"] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
