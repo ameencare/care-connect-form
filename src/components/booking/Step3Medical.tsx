@@ -218,6 +218,9 @@ function expandQuestions(base: Question[], medical: Record<string, string>, prob
     if (q.key === "fallHistory" && problem === "mobility" && medical.fallHistory === "نعم") {
       result.push({ key: "fallDoctorVisit", label: "هل راجعت الطبيب؟", options: ["نعم", "لا"] });
     }
+    if (q.key === "surgeryType" && problem === "post_op" && medical.surgeryType === "تبديل مفصل الركبة") {
+      result.push({ key: "side", label: "الجهة", options: ["اليمين", "اليسار", "كلاهما"] });
+    }
   }
   return result;
 }
