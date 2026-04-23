@@ -74,7 +74,7 @@ const flow: Record<ConditionId, Question[]> = {
   mobility: [
     { key: "cause", label: "سبب المشكلة؟", options: ["جلطة", "باركنسون", "تنويم بالمستشفى", "طريح فراش", "أخرى"] },
     { key: "issueType", label: "نوع المشكلة", options: ["ضعف عضلي", "ضعف أسفل الجسم", "ضعف نصف الجسم", "مشكلة توازن", "صعوبة في المشي"] },
-    { key: "since", label: "مدة الحالة", options: ["أقل من أسبوع", "من أسبوع إلى أقل من شهر", "من شهر إلى 3 أشهر", "أكثر من 3 أشهر"] },
+    { key: "since", label: "مدة الحالة", options: ["أقل من أسبوعين", "من أسبوعين إلى 6 أشهر", "أكثر من 6 أشهر"] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "بمساعدة", "لا يستطيع الحركة"] },
     { key: "aid", label: "استخدام أدوات مساعدة", options: ["كرسي متحرك", "عكاز", "مشاية", "لا يوجد"] },
     { key: "fallHistory", label: "هل سبق وتعرضت للسقوط؟", options: ["نعم", "لا"] },
@@ -82,7 +82,7 @@ const flow: Record<ConditionId, Question[]> = {
   ],
   post_op: [
     { key: "surgeryType", label: "نوع العملية", options: ["ركبة", "ورك", "ظهر", "كتف", "أخرى"] },
-    { key: "when", label: "متى تمت العملية؟", options: ["حديثًا (أقل من أسبوعين)", "قبل 3 شهور", "قبل 6 أشهر حتى سنة"] },
+    { key: "when", label: "متى تمت العملية؟", options: ["أقل من أسبوعين", "من أسبوعين إلى 6 أشهر", "أكثر من 6 أشهر"] },
     { key: "doctorRecommendation", label: "هل وصى الطبيب ببدء العلاج الطبيعي؟", options: ["نعم", "لا"] },
     { key: "movement", label: "مستوى الحركة", options: ["طبيعي", "محدود", "لا يستطيع الحركة"] },
     chronicQuestion,
@@ -212,7 +212,7 @@ function expandQuestions(base: Question[], medical: Record<string, string>, prob
       result.push({
         key: "surgeryWhen",
         label: "متى تمت العملية؟",
-        options: ["حديثًا (أقل من أسبوعين)", "قبل 3 شهور", "قبل 6 أشهر حتى سنة"],
+        options: ["أقل من أسبوعين", "من أسبوعين إلى 6 أشهر", "أكثر من 6 أشهر"],
       });
     }
     if (q.key === "fallHistory" && problem === "mobility" && medical.fallHistory === "نعم") {
