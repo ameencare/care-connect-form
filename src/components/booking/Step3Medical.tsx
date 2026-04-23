@@ -200,7 +200,7 @@ function expandQuestions(base: Question[], medical: Record<string, string>, prob
       const loc = medical.place;
       if (loc && SIDED_LOCATIONS.has(loc)) {
         result.push({ key: "side", label: "الجهة", options: ["اليمين", "اليسار", "كلاهما"] });
-        if (medical.side === "كلاهما") {
+        if (medical.side === "كلاهما" && problem === "pain") {
           result.push({ key: "worseSide", label: "أيهما أشد؟", options: ["اليمين", "اليسار"] });
         }
       }
