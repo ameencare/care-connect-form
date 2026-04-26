@@ -13,6 +13,7 @@ export interface BookingData {
   companion: {
     name: string;
     phone: string;
+    relation: string;
   };
   service: ServiceType;
   medical: Record<string, string>;
