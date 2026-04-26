@@ -103,6 +103,8 @@ export function Step1Owner({ data, update }: Props) {
               </div>
             </div>
           )}
+        </div>
+      )}
     </div>
   );
 }
