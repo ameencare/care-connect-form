@@ -2,6 +2,7 @@ import { User, Users } from "lucide-react";
 import { OptionCard } from "./OptionCard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { BookingData } from "./types";
 
 interface Props {
