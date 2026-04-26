@@ -85,10 +85,24 @@ export function Step1Owner({ data, update }: Props) {
                   onChange={(v) => update({ companion: { ...data.companion, phone: v } })}
                 />
               </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-semibold">صلة القرابة</Label>
+                <Select
+                  value={data.companion.relation}
+                  onValueChange={(v) => update({ companion: { ...data.companion, relation: v } })}
+                >
+                  <SelectTrigger className="h-12 rounded-xl text-base" dir="rtl">
+                    <SelectValue placeholder="اختر صلة القرابة" />
+                  </SelectTrigger>
+                  <SelectContent dir="rtl">
+                    {["والدي", "والدتي", "ابنة", "ابن", "جدي", "جدتي", "زوج", "زوجة", "عمي", "عمتي"].map((r) => (
+                      <SelectItem key={r} value={r}>{r}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           )}
-        </div>
-      )}
     </div>
   );
 }
