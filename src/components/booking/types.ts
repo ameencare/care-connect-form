@@ -13,6 +13,7 @@ export interface BookingData {
   companion: {
     name: string;
     phone: string;
+    relation: string;
   };
   service: ServiceType;
   medical: Record<string, string>;
@@ -28,7 +29,7 @@ export interface BookingData {
 export const initialData: BookingData = {
   bookingFor: null,
   patient: { fullName: "", age: "", nationalId: "", phone: "" },
-  companion: { name: "", phone: "" },
+  companion: { name: "", phone: "", relation: "" },
   service: null,
   medical: {},
   preferences: { gender: null, time: null, expertise: null },
